@@ -25,6 +25,10 @@
 			"DEV_USSalesSourceContainerURL": {
 				"type": "string",
 				"value": "a"
+			},
+			"DEV_USSalesSourceContainerName": {
+				"type": "string",
+				"value": "a"
 			}
 		}
 	},
