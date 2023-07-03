@@ -28,7 +28,7 @@
 			},
 			"DEV_USSalesSourceContainerName": {
 				"type": "string",
-				"value": "a"
+				"value": "dailysales"
 			},
 			"DEV_USSalesLandingContainerURL": {
 				"type": "string",
