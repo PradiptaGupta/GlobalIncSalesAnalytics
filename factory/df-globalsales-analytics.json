@@ -8,7 +8,7 @@
 			},
 			"DEV_SalesConfigFileContainerURL": {
 				"type": "string",
-				"value": "abfs://dataanalyticslabstorage.dfs.core.windows.net/"
+				"value": "https://dataanalyticslabstorage.blob.core.windows.net/"
 			},
 			"DEV_SPNID": {
 				"type": "string",
