@@ -21,6 +21,10 @@
 			"DEV_KVURL": {
 				"type": "string",
 				"value": "a"
+			},
+			"DEV_USSalesSourceContainerURL": {
+				"type": "string",
+				"value": "a"
 			}
 		}
 	},
