@@ -24,7 +24,7 @@
 			},
 			"DEV_USSalesSourceContainerURL": {
 				"type": "string",
-				"value": "a"
+				"value": "https://ussalesstorageaccount.dfs.core.windows.net/"
 			},
 			"DEV_USSalesSourceContainerName": {
 				"type": "string",
