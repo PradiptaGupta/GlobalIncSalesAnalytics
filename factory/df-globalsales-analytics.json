@@ -16,7 +16,7 @@
 			},
 			"DEV_SPNSecretName": {
 				"type": "string",
-				"value": "a"
+				"value": "globalsales-analytics-secret"
 			},
 			"DEV_KVURL": {
 				"type": "string",
