@@ -36,7 +36,7 @@
 			},
 			"DEV_USSalesLandingContainerName": {
 				"type": "string",
-				"value": "a"
+				"value": "us-sales-source"
 			},
 			"DEV_SalesConfigFileContainerName": {
 				"type": "string",
