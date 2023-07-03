@@ -13,6 +13,10 @@
 			"DEV_SPNID": {
 				"type": "string",
 				"value": "a"
+			},
+			"DEV_SPNSecretName": {
+				"type": "string",
+				"value": "a"
 			}
 		}
 	},
