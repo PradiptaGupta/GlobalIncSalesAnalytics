@@ -17,6 +17,10 @@
 			"DEV_SPNSecretName": {
 				"type": "string",
 				"value": "a"
+			},
+			"DEV_KVURL": {
+				"type": "string",
+				"value": "a"
 			}
 		}
 	},
