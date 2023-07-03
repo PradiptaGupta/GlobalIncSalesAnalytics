@@ -20,7 +20,7 @@
 			},
 			"DEV_KVURL": {
 				"type": "string",
-				"value": "a"
+				"value": "https://kv-globalsales-analytics.vault.azure.net/"
 			},
 			"DEV_USSalesSourceContainerURL": {
 				"type": "string",
