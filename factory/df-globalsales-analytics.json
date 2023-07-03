@@ -5,6 +5,10 @@
 			"Environment": {
 				"type": "string",
 				"value": "DEV"
+			},
+			"DEV_SalesConfigFileContainerURL": {
+				"type": "string",
+				"value": "a"
 			}
 		}
 	},
