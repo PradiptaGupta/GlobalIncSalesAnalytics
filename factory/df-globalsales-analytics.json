@@ -40,7 +40,7 @@
 			},
 			"DEV_SalesConfigFileContainerName": {
 				"type": "string",
-				"value": "a"
+				"value": "dataanalyticslabconfig"
 			}
 		}
 	},
