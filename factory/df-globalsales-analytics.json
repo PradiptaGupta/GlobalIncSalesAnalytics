@@ -32,7 +32,7 @@
 			},
 			"DEV_USSalesLandingContainerURL": {
 				"type": "string",
-				"value": "a"
+				"value": "https://dataanalyticslabstorage.blob.core.windows.net/"
 			},
 			"DEV_USSalesLandingContainerName": {
 				"type": "string",
