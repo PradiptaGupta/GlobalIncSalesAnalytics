@@ -1,0 +1,45 @@
+{
+	"name": "lnk_us_daily_sales",
+	"type": "Microsoft.DataFactory/factories/linkedservices",
+	"properties": {
+		"parameters": {
+			"ContainerURL": {
+				"type": "string"
+			},
+			"SPNID": {
+				"type": "string"
+			},
+			"SPNSecretName": {
+				"type": "string"
+			},
+			"KVURL": {
+				"type": "string"
+			}
+		},
+		"annotations": [],
+		"type": "AzureBlobFS",
+		"typeProperties": {
+			"url": "@{linkedService().ContainerURL}",
+			"tenant": "c42ed202-1ca3-48c8-bacd-c874383e5727",
+			"servicePrincipalId": "@{linkedService().SPNID}",
+			"servicePrincipalCredentialType": "ServicePrincipalKey",
+			"servicePrincipalCredential": {
+				"type": "AzureKeyVaultSecret",
+				"store": {
+					"referenceName": "lnk_globalsales_kv",
+					"type": "LinkedServiceReference",
+					"parameters": {
+						"KVURL": {
+							"value": "@linkedService().KVURL",
+							"type": "Expression"
+						}
+					}
+				},
+				"secretName": {
+					"value": "@linkedService().SPNSecretName",
+					"type": "Expression"
+				}
+			}
+		}
+	}
+}

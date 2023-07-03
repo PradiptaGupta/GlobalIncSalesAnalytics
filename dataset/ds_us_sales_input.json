@@ -1,0 +1,83 @@
+{
+	"name": "ds_us_sales_input",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "lnk_us_sales_datalake",
+			"type": "LinkedServiceReference",
+			"parameters": {
+				"KVURL": {
+					"value": "@dataset().USSalesInputKVURL",
+					"type": "Expression"
+				},
+				"ContainerURL": {
+					"value": "@dataset().USSalesInputContainerURL",
+					"type": "Expression"
+				},
+				"SPNID": {
+					"value": "@dataset().USSalesInputSPNID",
+					"type": "Expression"
+				},
+				"SPNSecretName": {
+					"value": "@dataset().USSalesInputSPNSecretName",
+					"type": "Expression"
+				}
+			}
+		},
+		"parameters": {
+			"SheetName": {
+				"type": "string"
+			},
+			"USSalesInputKVURL": {
+				"type": "string"
+			},
+			"USSalesInputContainerURL": {
+				"type": "string"
+			},
+			"USSalesInputSPNID": {
+				"type": "string"
+			},
+			"USSalesInputSPNSecretName": {
+				"type": "string"
+			},
+			"USSalesInputContainerName": {
+				"type": "string"
+			}
+		},
+		"annotations": [],
+		"type": "Excel",
+		"typeProperties": {
+			"sheetName": {
+				"value": "@dataset().SheetName",
+				"type": "Expression"
+			},
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": "US Sales_02-Jul-2023.xlsx",
+				"folderPath": "02-Jul-2023",
+				"fileSystem": {
+					"value": "@dataset().USSalesInputContainerName",
+					"type": "Expression"
+				}
+			},
+			"firstRowAsHeader": true
+		},
+		"schema": [
+			{
+				"type": "String"
+			},
+			{
+				"type": "String"
+			},
+			{
+				"type": "String"
+			},
+			{
+				"type": "String"
+			},
+			{
+				"type": "String"
+			}
+		]
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

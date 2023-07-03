@@ -1,0 +1,65 @@
+{
+	"name": "ds_ussalesinputformat",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "lnk_us_sales_input_format_config",
+			"type": "LinkedServiceReference",
+			"parameters": {
+				"ContainerURL": {
+					"value": "@dataset().ConfigContainerURL",
+					"type": "Expression"
+				},
+				"SPNID": {
+					"value": "@dataset().ConfigContainerSPN",
+					"type": "Expression"
+				},
+				"SPNSecretName": {
+					"value": "@dataset().ConfigContainerSPNSecret",
+					"type": "Expression"
+				},
+				"KVURL": {
+					"value": "@dataset().ConfigKVURL",
+					"type": "Expression"
+				}
+			}
+		},
+		"parameters": {
+			"ConfigFileContainer": {
+				"type": "string"
+			},
+			"ConfigContainerURL": {
+				"type": "string"
+			},
+			"ConfigContainerSPN": {
+				"type": "string"
+			},
+			"ConfigContainerSPNSecret": {
+				"type": "string"
+			},
+			"ConfigKVURL": {
+				"type": "string"
+			}
+		},
+		"annotations": [],
+		"type": "Json",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": "USDailySalesInputFormat.json",
+				"fileSystem": {
+					"value": "@dataset().ConfigFileContainer",
+					"type": "Expression"
+				}
+			}
+		},
+		"schema": {
+			"type": "object",
+			"properties": {
+				"Sheet": {
+					"type": "string"
+				}
+			}
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

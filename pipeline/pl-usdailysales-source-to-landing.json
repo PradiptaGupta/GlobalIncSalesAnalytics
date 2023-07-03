@@ -1,0 +1,230 @@
+{
+	"name": "pl-usdailysales-source-to-landing",
+	"properties": {
+		"activities": [
+			{
+				"name": "Get US Source Excel file Sheet names",
+				"type": "Lookup",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "JsonSource",
+						"storeSettings": {
+							"type": "AzureBlobFSReadSettings",
+							"recursive": false,
+							"enablePartitionDiscovery": false
+						},
+						"formatSettings": {
+							"type": "JsonReadSettings"
+						}
+					},
+					"dataset": {
+						"referenceName": "ds_ussalesinputformat",
+						"type": "DatasetReference",
+						"parameters": {
+							"ConfigFileContainer": {
+								"value": "@pipeline().parameters.SalesConfigFileContainerName",
+								"type": "Expression"
+							},
+							"ConfigContainerURL": {
+								"value": "@pipeline().parameters.SalesConfigFileContainerURL",
+								"type": "Expression"
+							},
+							"ConfigContainerSPN": {
+								"value": "@pipeline().parameters.SPNID",
+								"type": "Expression"
+							},
+							"ConfigContainerSPNSecret": {
+								"value": "@pipeline().parameters.SPNSecretName",
+								"type": "Expression"
+							},
+							"ConfigKVURL": {
+								"value": "@pipeline().parameters.KVURL",
+								"type": "Expression"
+							}
+						}
+					},
+					"firstRowOnly": false
+				}
+			},
+			{
+				"name": "Loop Through US Sales Source Excel file Sheets",
+				"type": "ForEach",
+				"dependsOn": [
+					{
+						"activity": "Get US Source Excel file Sheet names",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"items": {
+						"value": "@activity('Get US Source Excel file Sheet names').output.value",
+						"type": "Expression"
+					},
+					"isSequential": false,
+					"batchCount": 2,
+					"activities": [
+						{
+							"name": "Copy US Sales",
+							"type": "Copy",
+							"dependsOn": [],
+							"policy": {
+								"timeout": "0.12:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"source": {
+									"type": "ExcelSource",
+									"storeSettings": {
+										"type": "AzureBlobFSReadSettings",
+										"recursive": false,
+										"wildcardFolderPath": {
+											"value": "@formatDateTime(pipeline().TriggerTime,'dd-MMM-yyyy')",
+											"type": "Expression"
+										},
+										"wildcardFileName": {
+											"value": "@concat('US_Sales_',formatDateTime(pipeline().TriggerTime,'dd-MMM-yyyy'),'.xlsx')",
+											"type": "Expression"
+										},
+										"enablePartitionDiscovery": false
+									}
+								},
+								"sink": {
+									"type": "DelimitedTextSink",
+									"storeSettings": {
+										"type": "AzureBlobFSWriteSettings"
+									},
+									"formatSettings": {
+										"type": "DelimitedTextWriteSettings",
+										"quoteAllText": true,
+										"fileExtension": ".txt"
+									}
+								},
+								"enableStaging": false,
+								"translator": {
+									"type": "TabularTranslator",
+									"typeConversion": true,
+									"typeConversionSettings": {
+										"allowDataTruncation": true,
+										"treatBooleanAsNumber": false
+									}
+								}
+							},
+							"inputs": [
+								{
+									"referenceName": "ds_us_sales_input",
+									"type": "DatasetReference",
+									"parameters": {
+										"SheetName": {
+											"value": "@item().Sheet",
+											"type": "Expression"
+										},
+										"USSalesInputKVURL": {
+											"value": "@pipeline().parameters.KVURL",
+											"type": "Expression"
+										},
+										"USSalesInputContainerURL": {
+											"value": "@pipeline().parameters.USSalesSourceContainerURL",
+											"type": "Expression"
+										},
+										"USSalesInputSPNID": {
+											"value": "@pipeline().parameters.SPNID",
+											"type": "Expression"
+										},
+										"USSalesInputSPNSecretName": {
+											"value": "@pipeline().parameters.SPNSecretName",
+											"type": "Expression"
+										},
+										"USSalesInputContainerName": {
+											"value": "@pipeline().parameters.USSalesSourceContainerName",
+											"type": "Expression"
+										}
+									}
+								}
+							],
+							"outputs": [
+								{
+									"referenceName": "ds_us_sales_output",
+									"type": "DatasetReference",
+									"parameters": {
+										"FileName": {
+											"value": "@item().Sheet",
+											"type": "Expression"
+										},
+										"USSalesOutputKVURL": {
+											"value": "@pipeline().parameters.KVURL",
+											"type": "Expression"
+										},
+										"USSalesOutputContainerURL": {
+											"value": "@pipeline().parameters.USSalesLandingContainerURL",
+											"type": "Expression"
+										},
+										"USSalesOutputSPNID": {
+											"value": "@pipeline().parameters.SPNID",
+											"type": "Expression"
+										},
+										"USSalesOutputSPNSecretName": {
+											"value": "@pipeline().parameters.SPNSecretName",
+											"type": "Expression"
+										},
+										"USSalesOutputContainerName": {
+											"value": "@pipeline().parameters.USSalesLandingContainerName",
+											"type": "Expression"
+										}
+									}
+								}
+							]
+						}
+					]
+				}
+			}
+		],
+		"parameters": {
+			"SalesConfigFileContainerURL": {
+				"type": "string"
+			},
+			"SPNID": {
+				"type": "string"
+			},
+			"SPNSecretName": {
+				"type": "string"
+			},
+			"USSalesSourceContainerURL": {
+				"type": "string"
+			},
+			"USSalesLandingContainerURL": {
+				"type": "string"
+			},
+			"KVURL": {
+				"type": "string"
+			},
+			"SalesConfigFileContainerName": {
+				"type": "string"
+			},
+			"USSalesSourceContainerName": {
+				"type": "string"
+			},
+			"USSalesLandingContainerName": {
+				"type": "string"
+			}
+		},
+		"annotations": [],
+		"lastPublishTime": "2023-07-03T08:51:41Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

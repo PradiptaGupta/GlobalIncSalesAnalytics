@@ -1,0 +1,9 @@
+{
+	"name": "df-globalsales-analytics",
+	"location": "eastus",
+	"identity": {
+		"type": "SystemAssigned",
+		"principalId": "72f8a592-a1fd-4448-a285-2d6ffe88168c",
+		"tenantId": "c42ed202-1ca3-48c8-bacd-c874383e5727"
+	}
+}
