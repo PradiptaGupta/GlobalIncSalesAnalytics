@@ -33,6 +33,10 @@
 			"DEV_USSalesLandingContainerURL": {
 				"type": "string",
 				"value": "a"
+			},
+			"DEV_USSalesLandingContainerName": {
+				"type": "string",
+				"value": "a"
 			}
 		}
 	},
