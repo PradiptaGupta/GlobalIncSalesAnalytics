@@ -41,6 +41,9 @@
 			},
 			"USSalesOutputContainerName": {
 				"type": "string"
+			},
+			"USSalesPipelineRunDate": {
+				"type": "string"
 			}
 		},
 		"annotations": [],
@@ -49,11 +52,11 @@
 			"location": {
 				"type": "AzureBlobFSLocation",
 				"fileName": {
-					"value": "@concat('US_',dataset().FileName,'_',formatDateTime(pipeline().TriggerTime,'dd-MMM-yyyy'),'.csv')",
+					"value": "@concat('US_',dataset().FileName,'_',formatDateTime(dataset().USSalesPipelineRunDate,'dd-MMM-yyyy'),'.csv')",
 					"type": "Expression"
 				},
 				"folderPath": {
-					"value": "@formatDateTime(pipeline().TriggerTime,'dd-MMM-yyyy')",
+					"value": "@formatDateTime(dataset().USSalesPipelineRunDate,'dd-MMM-yyyy')",
 					"type": "Expression"
 				},
 				"fileSystem": {

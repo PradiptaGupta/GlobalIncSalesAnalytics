@@ -5,7 +5,14 @@
 			{
 				"name": "Get US Source Excel file Sheet names",
 				"type": "Lookup",
-				"dependsOn": [],
+				"dependsOn": [
+					{
+						"activity": "Set variable10",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
 				"policy": {
 					"timeout": "0.12:00:00",
 					"retry": 0,
@@ -31,23 +38,23 @@
 						"type": "DatasetReference",
 						"parameters": {
 							"ConfigFileContainer": {
-								"value": "@pipeline().parameters.SalesConfigFileContainerName",
+								"value": "@variables('US_S2L_SalesConfigFileContainerName')",
 								"type": "Expression"
 							},
 							"ConfigContainerURL": {
-								"value": "@pipeline().parameters.SalesConfigFileContainerURL",
+								"value": "@variables('US_S2L_SalesConfigFileContainerURL')",
 								"type": "Expression"
 							},
 							"ConfigContainerSPN": {
-								"value": "@pipeline().parameters.SPNID",
+								"value": "@variables('US_S2L_SPNID')",
 								"type": "Expression"
 							},
 							"ConfigContainerSPNSecret": {
-								"value": "@pipeline().parameters.SPNSecretName",
+								"value": "@variables('US_S2L_SPNSecretName')",
 								"type": "Expression"
 							},
 							"ConfigKVURL": {
-								"value": "@pipeline().parameters.KVURL",
+								"value": "@variables('US_S2L_KVURL')",
 								"type": "Expression"
 							}
 						}
@@ -94,11 +101,11 @@
 										"type": "AzureBlobFSReadSettings",
 										"recursive": false,
 										"wildcardFolderPath": {
-											"value": "@formatDateTime(pipeline().TriggerTime,'dd-MMM-yyyy')",
+											"value": "@formatDateTime(variables('US_S2L_PipelineRunDate'),'dd-MMM-yyyy')",
 											"type": "Expression"
 										},
 										"wildcardFileName": {
-											"value": "@concat('US_Sales_',formatDateTime(pipeline().TriggerTime,'dd-MMM-yyyy'),'.xlsx')",
+											"value": "@concat('US_Sales_',formatDateTime(variables('US_S2L_PipelineRunDate'),'dd-MMM-yyyy'),'.xlsx')",
 											"type": "Expression"
 										},
 										"enablePartitionDiscovery": false
@@ -135,23 +142,23 @@
 											"type": "Expression"
 										},
 										"USSalesInputKVURL": {
-											"value": "@pipeline().parameters.KVURL",
+											"value": "@variables('US_S2L_KVURL')",
 											"type": "Expression"
 										},
 										"USSalesInputContainerURL": {
-											"value": "@pipeline().parameters.USSalesSourceContainerURL",
+											"value": "@variables('US_S2L_USSalesSourceContainerURL')",
 											"type": "Expression"
 										},
 										"USSalesInputSPNID": {
-											"value": "@pipeline().parameters.SPNID",
+											"value": "@variables('US_S2L_SPNID')",
 											"type": "Expression"
 										},
 										"USSalesInputSPNSecretName": {
-											"value": "@pipeline().parameters.SPNSecretName",
+											"value": "@variables('US_S2L_SPNSecretName')",
 											"type": "Expression"
 										},
 										"USSalesInputContainerName": {
-											"value": "@pipeline().parameters.USSalesSourceContainerName",
+											"value": "@variables('US_S2L_USSalesSourceContainerName')",
 											"type": "Expression"
 										}
 									}
@@ -167,23 +174,27 @@
 											"type": "Expression"
 										},
 										"USSalesOutputKVURL": {
-											"value": "@pipeline().parameters.KVURL",
+											"value": "@variables('US_S2L_KVURL')",
 											"type": "Expression"
 										},
 										"USSalesOutputContainerURL": {
-											"value": "@pipeline().parameters.USSalesLandingContainerURL",
+											"value": "@variables('US_S2L_USSalesLandingContainerURL')",
 											"type": "Expression"
 										},
 										"USSalesOutputSPNID": {
-											"value": "@pipeline().parameters.SPNID",
+											"value": "@variables('US_S2L_SPNID')",
 											"type": "Expression"
 										},
 										"USSalesOutputSPNSecretName": {
-											"value": "@pipeline().parameters.SPNSecretName",
+											"value": "@variables('US_S2L_SPNSecretName')",
 											"type": "Expression"
 										},
 										"USSalesOutputContainerName": {
-											"value": "@pipeline().parameters.USSalesLandingContainerName",
+											"value": "@variables('US_S2L_USSalesLandingContainerName')",
+											"type": "Expression"
+										},
+										"USSalesPipelineRunDate": {
+											"value": "@variables('US_S2L_PipelineRunDate')",
 											"type": "Expression"
 										}
 									}
@@ -192,35 +203,307 @@
 						}
 					]
 				}
+			},
+			{
+				"name": "Set variable1",
+				"type": "SetVariable",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "US_S2L_SalesConfigFileContainerURL",
+					"value": {
+						"value": "@if(equals(pipeline().globalParameters.Environment,'DEV'),pipeline().globalParameters.DEV_SalesConfigFileContainerURL, if(equals(pipeline().globalParameters.Environment,'QA'), 'Bx', if(equals(pipeline().globalParameters.Environment,'UAT'), 'Bx', 'C')))",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "Set variable2",
+				"type": "SetVariable",
+				"dependsOn": [
+					{
+						"activity": "Set variable1",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "US_S2L_SPNID",
+					"value": {
+						"value": "@if(equals(pipeline().globalParameters.Environment,'DEV'),pipeline().globalParameters.DEV_SPNID, if(equals(pipeline().globalParameters.Environment,'QA'), 'Bx', if(equals(pipeline().globalParameters.Environment,'UAT'), 'Bx', 'C')))",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "Set variable3",
+				"type": "SetVariable",
+				"dependsOn": [
+					{
+						"activity": "Set variable2",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "US_S2L_SPNSecretName",
+					"value": {
+						"value": "@if(equals(pipeline().globalParameters.Environment,'DEV'),pipeline().globalParameters.DEV_SPNSecretName, if(equals(pipeline().globalParameters.Environment,'QA'), 'Bx', if(equals(pipeline().globalParameters.Environment,'UAT'), 'Bx', 'C')))",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "Set variable4",
+				"type": "SetVariable",
+				"dependsOn": [
+					{
+						"activity": "Set variable3",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "US_S2L_USSalesSourceContainerURL",
+					"value": {
+						"value": "@if(equals(pipeline().globalParameters.Environment,'DEV'),pipeline().globalParameters.DEV_USSalesSourceContainerURL, if(equals(pipeline().globalParameters.Environment,'QA'), 'Bx', if(equals(pipeline().globalParameters.Environment,'UAT'), 'Bx', 'C')))",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "Set variable5",
+				"type": "SetVariable",
+				"dependsOn": [
+					{
+						"activity": "Set variable4",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "US_S2L_USSalesLandingContainerURL",
+					"value": {
+						"value": "@if(equals(pipeline().globalParameters.Environment,'DEV'),pipeline().globalParameters.DEV_USSalesLandingContainerURL, if(equals(pipeline().globalParameters.Environment,'QA'), 'Bx', if(equals(pipeline().globalParameters.Environment,'UAT'), 'Bx', 'C')))",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "Set variable6",
+				"type": "SetVariable",
+				"dependsOn": [
+					{
+						"activity": "Set variable5",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "US_S2L_KVURL",
+					"value": {
+						"value": "@if(equals(pipeline().globalParameters.Environment,'DEV'),pipeline().globalParameters.DEV_KVURL, if(equals(pipeline().globalParameters.Environment,'QA'), 'Bx', if(equals(pipeline().globalParameters.Environment,'UAT'), 'Bx', 'C')))",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "Set variable7",
+				"type": "SetVariable",
+				"dependsOn": [
+					{
+						"activity": "Set variable6",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "US_S2L_SalesConfigFileContainerName",
+					"value": {
+						"value": "@if(equals(pipeline().globalParameters.Environment,'DEV'),pipeline().globalParameters.DEV_SalesConfigFileContainerName, if(equals(pipeline().globalParameters.Environment,'QA'), 'Bx', if(equals(pipeline().globalParameters.Environment,'UAT'), 'Bx', 'C')))",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "Set variable8",
+				"type": "SetVariable",
+				"dependsOn": [
+					{
+						"activity": "Set variable7",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "US_S2L_USSalesSourceContainerName",
+					"value": {
+						"value": "@if(equals(pipeline().globalParameters.Environment,'DEV'),pipeline().globalParameters.DEV_USSalesSourceContainerName, if(equals(pipeline().globalParameters.Environment,'QA'), 'Bx', if(equals(pipeline().globalParameters.Environment,'UAT'), 'Bx', 'C')))",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "Set variable9",
+				"type": "SetVariable",
+				"dependsOn": [
+					{
+						"activity": "Set variable8",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "US_S2L_USSalesLandingContainerName",
+					"value": {
+						"value": "@if(equals(pipeline().globalParameters.Environment,'DEV'),pipeline().globalParameters.DEV_USSalesLandingContainerName, if(equals(pipeline().globalParameters.Environment,'QA'), 'Bx', if(equals(pipeline().globalParameters.Environment,'UAT'), 'Bx', 'C')))",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "Set variable10",
+				"type": "SetVariable",
+				"dependsOn": [
+					{
+						"activity": "Set variable9",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "US_S2L_PipelineRunDate",
+					"value": {
+						"value": "@pipeline().parameters.RunDate",
+						"type": "Expression"
+					}
+				}
 			}
 		],
 		"parameters": {
-			"SalesConfigFileContainerURL": {
-				"type": "string"
+			"RunDate": {
+				"type": "string",
+				"defaultValue": "dd-MMM-yyyy"
+			}
+		},
+		"variables": {
+			"US_S2L_SalesConfigFileContainerURL": {
+				"type": "String"
 			},
-			"SPNID": {
-				"type": "string"
+			"US_S2L_SPNID": {
+				"type": "String"
 			},
-			"SPNSecretName": {
-				"type": "string"
+			"US_S2L_SPNSecretName": {
+				"type": "String"
 			},
-			"USSalesSourceContainerURL": {
-				"type": "string"
+			"US_S2L_USSalesSourceContainerURL": {
+				"type": "String"
 			},
-			"USSalesLandingContainerURL": {
-				"type": "string"
+			"US_S2L_USSalesLandingContainerURL": {
+				"type": "String"
 			},
-			"KVURL": {
-				"type": "string"
+			"US_S2L_KVURL": {
+				"type": "String"
 			},
-			"SalesConfigFileContainerName": {
-				"type": "string"
+			"US_S2L_SalesConfigFileContainerName": {
+				"type": "String"
 			},
-			"USSalesSourceContainerName": {
-				"type": "string"
+			"US_S2L_USSalesSourceContainerName": {
+				"type": "String"
 			},
-			"USSalesLandingContainerName": {
-				"type": "string"
+			"US_S2L_USSalesLandingContainerName": {
+				"type": "String"
+			},
+			"US_S2L_PipelineRunDate": {
+				"type": "String"
 			}
 		},
 		"annotations": [],
