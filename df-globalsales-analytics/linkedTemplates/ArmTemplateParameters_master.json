@@ -1,0 +1,45 @@
+{
+	"$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"value": "df-globalsales-analytics"
+		},
+		"lnk_globalsales_kv_properties_typeProperties_baseUrl": {
+			"value": "@{linkedService().KVURL}"
+		},
+		"lnk_us_daily_sales_properties_typeProperties_url": {
+			"value": "@{linkedService().ContainerURL}"
+		},
+		"lnk_us_daily_sales_properties_typeProperties_tenant": {
+			"value": "c42ed202-1ca3-48c8-bacd-c874383e5727"
+		},
+		"lnk_us_daily_sales_properties_typeProperties_servicePrincipalId": {
+			"value": "@{linkedService().SPNID}"
+		},
+		"lnk_us_sales_datalake_properties_typeProperties_url": {
+			"value": "@{linkedService().ContainerURL}"
+		},
+		"lnk_us_sales_datalake_properties_typeProperties_tenant": {
+			"value": "c42ed202-1ca3-48c8-bacd-c874383e5727"
+		},
+		"lnk_us_sales_datalake_properties_typeProperties_servicePrincipalId": {
+			"value": "@{linkedService().SPNID}"
+		},
+		"lnk_us_sales_input_format_config_properties_typeProperties_url": {
+			"value": "@{linkedService().ContainerURL}"
+		},
+		"lnk_us_sales_input_format_config_properties_typeProperties_tenant": {
+			"value": "c42ed202-1ca3-48c8-bacd-c874383e5727"
+		},
+		"lnk_us_sales_input_format_config_properties_typeProperties_servicePrincipalId": {
+			"value": "@{linkedService().SPNID}"
+		},
+		"containerUri": {
+			"value": ""
+		},
+		"containerSasToken": {
+			"value": ""
+		}
+	}
+}

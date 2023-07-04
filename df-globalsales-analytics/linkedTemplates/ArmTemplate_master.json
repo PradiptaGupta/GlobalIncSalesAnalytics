@@ -1,0 +1,112 @@
+{
+	"$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"type": "string",
+			"metadata": "Data Factory name",
+			"defaultValue": "df-globalsales-analytics"
+		},
+		"lnk_globalsales_kv_properties_typeProperties_baseUrl": {
+			"type": "string",
+			"defaultValue": "@{linkedService().KVURL}"
+		},
+		"lnk_us_daily_sales_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "@{linkedService().ContainerURL}"
+		},
+		"lnk_us_daily_sales_properties_typeProperties_tenant": {
+			"type": "string",
+			"defaultValue": "c42ed202-1ca3-48c8-bacd-c874383e5727"
+		},
+		"lnk_us_daily_sales_properties_typeProperties_servicePrincipalId": {
+			"type": "string",
+			"defaultValue": "@{linkedService().SPNID}"
+		},
+		"lnk_us_sales_datalake_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "@{linkedService().ContainerURL}"
+		},
+		"lnk_us_sales_datalake_properties_typeProperties_tenant": {
+			"type": "string",
+			"defaultValue": "c42ed202-1ca3-48c8-bacd-c874383e5727"
+		},
+		"lnk_us_sales_datalake_properties_typeProperties_servicePrincipalId": {
+			"type": "string",
+			"defaultValue": "@{linkedService().SPNID}"
+		},
+		"lnk_us_sales_input_format_config_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "@{linkedService().ContainerURL}"
+		},
+		"lnk_us_sales_input_format_config_properties_typeProperties_tenant": {
+			"type": "string",
+			"defaultValue": "c42ed202-1ca3-48c8-bacd-c874383e5727"
+		},
+		"lnk_us_sales_input_format_config_properties_typeProperties_servicePrincipalId": {
+			"type": "string",
+			"defaultValue": "@{linkedService().SPNID}"
+		},
+		"containerUri": {
+			"type": "string",
+			"metadata": "URI to storage account containing linked ARM templates"
+		},
+		"containerSasToken": {
+			"type": "string",
+			"metadata": "Sas token to storage account containing linked ARM templates"
+		}
+	},
+	"variables": {
+		"factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
+	},
+	"resources": [
+		{
+			"name": "df-globalsales-analytics_ArmTemplate_0",
+			"type": "Microsoft.Resources/deployments",
+			"apiVersion": "2018-02-01",
+			"properties": {
+				"mode": "incremental",
+				"templateLink": {
+					"uri": "[concat(parameters('containerUri'), '/ArmTemplate_0.json', parameters('containerSasToken'))]",
+					"contentVersion": "1.0.0.0"
+				},
+				"parameters": {
+					"factoryName": {
+						"value": "[parameters('factoryName')]"
+					},
+					"lnk_globalsales_kv_properties_typeProperties_baseUrl": {
+						"value": "[parameters('lnk_globalsales_kv_properties_typeProperties_baseUrl')]"
+					},
+					"lnk_us_daily_sales_properties_typeProperties_url": {
+						"value": "[parameters('lnk_us_daily_sales_properties_typeProperties_url')]"
+					},
+					"lnk_us_daily_sales_properties_typeProperties_tenant": {
+						"value": "[parameters('lnk_us_daily_sales_properties_typeProperties_tenant')]"
+					},
+					"lnk_us_daily_sales_properties_typeProperties_servicePrincipalId": {
+						"value": "[parameters('lnk_us_daily_sales_properties_typeProperties_servicePrincipalId')]"
+					},
+					"lnk_us_sales_datalake_properties_typeProperties_url": {
+						"value": "[parameters('lnk_us_sales_datalake_properties_typeProperties_url')]"
+					},
+					"lnk_us_sales_datalake_properties_typeProperties_tenant": {
+						"value": "[parameters('lnk_us_sales_datalake_properties_typeProperties_tenant')]"
+					},
+					"lnk_us_sales_datalake_properties_typeProperties_servicePrincipalId": {
+						"value": "[parameters('lnk_us_sales_datalake_properties_typeProperties_servicePrincipalId')]"
+					},
+					"lnk_us_sales_input_format_config_properties_typeProperties_url": {
+						"value": "[parameters('lnk_us_sales_input_format_config_properties_typeProperties_url')]"
+					},
+					"lnk_us_sales_input_format_config_properties_typeProperties_tenant": {
+						"value": "[parameters('lnk_us_sales_input_format_config_properties_typeProperties_tenant')]"
+					},
+					"lnk_us_sales_input_format_config_properties_typeProperties_servicePrincipalId": {
+						"value": "[parameters('lnk_us_sales_input_format_config_properties_typeProperties_servicePrincipalId')]"
+					}
+				}
+			},
+			"dependsOn": []
+		}
+	]
+}

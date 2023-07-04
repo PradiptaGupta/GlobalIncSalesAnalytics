@@ -1,0 +1,42 @@
+{
+	"Environment": {
+		"type": "string",
+		"value": "DEV"
+	},
+	"DEV_SalesConfigFileContainerURL": {
+		"type": "string",
+		"value": "https://dataanalyticslabstorage.dfs.core.windows.net/"
+	},
+	"DEV_SPNID": {
+		"type": "string",
+		"value": "6314eaa1-2e8e-4c12-bd61-6dabbdb84b83"
+	},
+	"DEV_SPNSecretName": {
+		"type": "string",
+		"value": "globalsales-analytics-secret"
+	},
+	"DEV_KVURL": {
+		"type": "string",
+		"value": "https://kv-globalsales-analytics.vault.azure.net/"
+	},
+	"DEV_USSalesSourceContainerURL": {
+		"type": "string",
+		"value": "https://ussalesstorageaccount.dfs.core.windows.net/"
+	},
+	"DEV_USSalesSourceContainerName": {
+		"type": "string",
+		"value": "dailysales"
+	},
+	"DEV_USSalesLandingContainerURL": {
+		"type": "string",
+		"value": "https://dataanalyticslabstorage.dfs.core.windows.net/"
+	},
+	"DEV_USSalesLandingContainerName": {
+		"type": "string",
+		"value": "us-sales-source"
+	},
+	"DEV_SalesConfigFileContainerName": {
+		"type": "string",
+		"value": "dataanalyticslabconfig"
+	}
+}
