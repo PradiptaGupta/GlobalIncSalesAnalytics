@@ -2,7 +2,7 @@
 	"name": "ds_us_sales_input",
 	"properties": {
 		"linkedServiceName": {
-			"referenceName": "lnk_sales_analytics_source",
+			"referenceName": "lnk_us_daily_sales_source",
 			"type": "LinkedServiceReference",
 			"parameters": {
 				"KVURL": {

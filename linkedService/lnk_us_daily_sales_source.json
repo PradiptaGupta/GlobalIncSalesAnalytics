@@ -1,5 +1,5 @@
 {
-	"name": "lnk_sales_analytics_source",
+	"name": "lnk_us_daily_sales_source",
 	"type": "Microsoft.DataFactory/factories/linkedservices",
 	"properties": {
 		"parameters": {
