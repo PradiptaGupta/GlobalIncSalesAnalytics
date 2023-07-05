@@ -56,7 +56,7 @@
 			},
 			"DEV_HKSGPSalesLandingContainerName": {
 				"type": "string",
-				"value": "AAA"
+				"value": "hk-sgp-sales-source"
 			}
 		}
 	},
