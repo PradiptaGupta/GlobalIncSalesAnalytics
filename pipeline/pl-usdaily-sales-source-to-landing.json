@@ -1,5 +1,5 @@
 {
-	"name": "pl-usdailysales-source-to-landing",
+	"name": "pl-usdaily-sales-source-to-landing",
 	"properties": {
 		"activities": [
 			{
@@ -7,7 +7,7 @@
 				"type": "Lookup",
 				"dependsOn": [
 					{
-						"activity": "Set variable10",
+						"activity": "Set Run Date",
 						"dependencyConditions": [
 							"Succeeded"
 						]
@@ -205,7 +205,7 @@
 				}
 			},
 			{
-				"name": "Set variable1",
+				"name": "Set Config ContainerURL",
 				"type": "SetVariable",
 				"dependsOn": [],
 				"policy": {
@@ -225,11 +225,11 @@
 				}
 			},
 			{
-				"name": "Set variable2",
+				"name": "Set SPN ID",
 				"type": "SetVariable",
 				"dependsOn": [
 					{
-						"activity": "Set variable1",
+						"activity": "Set Config ContainerURL",
 						"dependencyConditions": [
 							"Succeeded"
 						]
@@ -252,11 +252,11 @@
 				}
 			},
 			{
-				"name": "Set variable3",
+				"name": "Set SPN Secret Name",
 				"type": "SetVariable",
 				"dependsOn": [
 					{
-						"activity": "Set variable2",
+						"activity": "Set SPN ID",
 						"dependencyConditions": [
 							"Succeeded"
 						]
@@ -279,11 +279,11 @@
 				}
 			},
 			{
-				"name": "Set variable4",
+				"name": "Set SourceContainerURL",
 				"type": "SetVariable",
 				"dependsOn": [
 					{
-						"activity": "Set variable3",
+						"activity": "Set SPN Secret Name",
 						"dependencyConditions": [
 							"Succeeded"
 						]
@@ -306,11 +306,11 @@
 				}
 			},
 			{
-				"name": "Set variable5",
+				"name": "Set Landing container URL",
 				"type": "SetVariable",
 				"dependsOn": [
 					{
-						"activity": "Set variable4",
+						"activity": "Set SourceContainerURL",
 						"dependencyConditions": [
 							"Succeeded"
 						]
@@ -333,11 +333,11 @@
 				}
 			},
 			{
-				"name": "Set variable6",
+				"name": "Set KV URL",
 				"type": "SetVariable",
 				"dependsOn": [
 					{
-						"activity": "Set variable5",
+						"activity": "Set Landing container URL",
 						"dependencyConditions": [
 							"Succeeded"
 						]
@@ -360,11 +360,11 @@
 				}
 			},
 			{
-				"name": "Set variable7",
+				"name": "Set Config Container Name",
 				"type": "SetVariable",
 				"dependsOn": [
 					{
-						"activity": "Set variable6",
+						"activity": "Set KV URL",
 						"dependencyConditions": [
 							"Succeeded"
 						]
@@ -387,11 +387,11 @@
 				}
 			},
 			{
-				"name": "Set variable8",
+				"name": "Set Source Container Name",
 				"type": "SetVariable",
 				"dependsOn": [
 					{
-						"activity": "Set variable7",
+						"activity": "Set Config Container Name",
 						"dependencyConditions": [
 							"Succeeded"
 						]
@@ -414,11 +414,11 @@
 				}
 			},
 			{
-				"name": "Set variable9",
+				"name": "Set Landing Container Name",
 				"type": "SetVariable",
 				"dependsOn": [
 					{
-						"activity": "Set variable8",
+						"activity": "Set Source Container Name",
 						"dependencyConditions": [
 							"Succeeded"
 						]
@@ -441,11 +441,11 @@
 				}
 			},
 			{
-				"name": "Set variable10",
+				"name": "Set Run Date",
 				"type": "SetVariable",
 				"dependsOn": [
 					{
-						"activity": "Set variable9",
+						"activity": "Set Landing Container Name",
 						"dependencyConditions": [
 							"Succeeded"
 						]

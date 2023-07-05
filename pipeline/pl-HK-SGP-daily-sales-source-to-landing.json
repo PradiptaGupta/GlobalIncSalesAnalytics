@@ -1,0 +1,373 @@
+{
+	"name": "pl-HK-SGP-daily-sales-source-to-landing",
+	"properties": {
+		"activities": [
+			{
+				"name": "Copy HK and SGP daily Sales files from S2L",
+				"type": "Copy",
+				"dependsOn": [
+					{
+						"activity": "Set Run Date",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "DelimitedTextSource",
+						"storeSettings": {
+							"type": "AzureBlobFSReadSettings",
+							"recursive": false,
+							"wildcardFolderPath": {
+								"value": "@formatDateTime(variables('HKSGP_S2L_PipelineRunDate'),'dd-MMM-yyyy')",
+								"type": "Expression"
+							},
+							"wildcardFileName": {
+								"value": "@concat('ASIA_Sales_',formatDateTime(variables('HKSGP_S2L_PipelineRunDate'),'dd-MMM-yyyy'),'.zip')",
+								"type": "Expression"
+							},
+							"enablePartitionDiscovery": false
+						},
+						"formatSettings": {
+							"type": "DelimitedTextReadSettings",
+							"compressionProperties": {
+								"type": "ZipDeflateReadSettings"
+							}
+						}
+					},
+					"sink": {
+						"type": "DelimitedTextSink",
+						"storeSettings": {
+							"type": "AzureBlobFSWriteSettings"
+						},
+						"formatSettings": {
+							"type": "DelimitedTextWriteSettings",
+							"quoteAllText": true,
+							"fileExtension": ".csv"
+						}
+					},
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"typeConversion": true,
+						"typeConversionSettings": {
+							"allowDataTruncation": true,
+							"treatBooleanAsNumber": false
+						}
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "ds_HK_SGP_sales_input",
+						"type": "DatasetReference",
+						"parameters": {
+							"HKSGPSalesInputKVURL": {
+								"value": "@variables('HK_SGP_S2L_KVURL')",
+								"type": "Expression"
+							},
+							"HKSGPContainerURL": {
+								"value": "@variables('HK_SGP_S2L_HKSGPSSalesSourceContainerURL')",
+								"type": "Expression"
+							},
+							"HKSGPSPNID": {
+								"value": "@variables('HK_SGP_S2L_SPNID')",
+								"type": "Expression"
+							},
+							"HKSGPSPNSecretName": {
+								"value": "@variables('HK_SGP_S2L_SPNSecretName')",
+								"type": "Expression"
+							},
+							"HKSGPSalesInputContainerName": {
+								"value": "@variables('HK_SGP_S2L_HKSGPSalesSourceContainerName')",
+								"type": "Expression"
+							}
+						}
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "ds_HK_SGP_sales_output",
+						"type": "DatasetReference",
+						"parameters": {
+							"HKSGPSalesOutputKVURL": {
+								"value": "@variables('HK_SGP_S2L_KVURL')",
+								"type": "Expression"
+							},
+							"HKSGPSalesOutputContainerURL": {
+								"value": "@variables('HK_SGP_S2L_HKSGPSalesLandingContainerURL')",
+								"type": "Expression"
+							},
+							"HKSGPSalesOutputSPNID": {
+								"value": "@variables('HK_SGP_S2L_SPNID')",
+								"type": "Expression"
+							},
+							"HKSGPSalesOutputSPNSecretName": {
+								"value": "@variables('HK_SGP_S2L_SPNSecretName')",
+								"type": "Expression"
+							},
+							"HKSGPSalesOutputContainerName": {
+								"value": "@variables('HK_SGP_S2L_HKSGPSalesLandingContainerName')",
+								"type": "Expression"
+							},
+							"HKSGPSalesPipelineRunDate": {
+								"value": "@variables('HKSGP_S2L_PipelineRunDate')",
+								"type": "Expression"
+							}
+						}
+					}
+				]
+			},
+			{
+				"name": "Set SPN ID",
+				"type": "SetVariable",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "HK_SGP_S2L_SPNID",
+					"value": {
+						"value": "@if(equals(pipeline().globalParameters.Environment,'DEV'),pipeline().globalParameters.DEV_SPNID, if(equals(pipeline().globalParameters.Environment,'QA'), 'Bx', if(equals(pipeline().globalParameters.Environment,'UAT'), 'Bx', 'C')))",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "Set SPN SecretName",
+				"type": "SetVariable",
+				"dependsOn": [
+					{
+						"activity": "Set SPN ID",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "HK_SGP_S2L_SPNSecretName",
+					"value": {
+						"value": "@if(equals(pipeline().globalParameters.Environment,'DEV'),pipeline().globalParameters.DEV_SPNSecretName, if(equals(pipeline().globalParameters.Environment,'QA'), 'Bx', if(equals(pipeline().globalParameters.Environment,'UAT'), 'Bx', 'C')))",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "Set SourceContainer URL",
+				"type": "SetVariable",
+				"dependsOn": [
+					{
+						"activity": "Set SPN SecretName",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "HK_SGP_S2L_HKSGPSSalesSourceContainerURL",
+					"value": {
+						"value": "@if(equals(pipeline().globalParameters.Environment,'DEV'),pipeline().globalParameters.DEV_HKSGPSalesSourceContainerURL, if(equals(pipeline().globalParameters.Environment,'QA'), 'Bx', if(equals(pipeline().globalParameters.Environment,'UAT'), 'Bx', 'C')))",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "Set Source Container Name",
+				"type": "SetVariable",
+				"dependsOn": [
+					{
+						"activity": "Set SourceContainer URL",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "HK_SGP_S2L_HKSGPSalesSourceContainerName",
+					"value": {
+						"value": "@if(equals(pipeline().globalParameters.Environment,'DEV'),pipeline().globalParameters.DEV_HKSGPSalesSourceContainerName, if(equals(pipeline().globalParameters.Environment,'QA'), 'Bx', if(equals(pipeline().globalParameters.Environment,'UAT'), 'Bx', 'C')))",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "Set Landing Container URL",
+				"type": "SetVariable",
+				"dependsOn": [
+					{
+						"activity": "Set Source Container Name",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "HK_SGP_S2L_HKSGPSalesLandingContainerURL",
+					"value": {
+						"value": "@if(equals(pipeline().globalParameters.Environment,'DEV'),pipeline().globalParameters.DEV_HKSGPSalesLandingContainerURL, if(equals(pipeline().globalParameters.Environment,'QA'), 'Bx', if(equals(pipeline().globalParameters.Environment,'UAT'), 'Bx', 'C')))",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "Set Landing Container Name",
+				"type": "SetVariable",
+				"dependsOn": [
+					{
+						"activity": "Set Landing Container URL",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "HK_SGP_S2L_HKSGPSalesLandingContainerName",
+					"value": {
+						"value": "@if(equals(pipeline().globalParameters.Environment,'DEV'),pipeline().globalParameters.DEV_HKSGPSalesLandingContainerName, if(equals(pipeline().globalParameters.Environment,'QA'), 'Bx', if(equals(pipeline().globalParameters.Environment,'UAT'), 'Bx', 'C')))",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "Set KV URL",
+				"type": "SetVariable",
+				"dependsOn": [
+					{
+						"activity": "Set Landing Container Name",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "HK_SGP_S2L_KVURL",
+					"value": {
+						"value": "@if(equals(pipeline().globalParameters.Environment,'DEV'),pipeline().globalParameters.DEV_KVURL, if(equals(pipeline().globalParameters.Environment,'QA'), 'Bx', if(equals(pipeline().globalParameters.Environment,'UAT'), 'Bx', 'C')))",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "Set Run Date",
+				"type": "SetVariable",
+				"dependsOn": [
+					{
+						"activity": "Set KV URL",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "HKSGP_S2L_PipelineRunDate",
+					"value": {
+						"value": "@pipeline().parameters.RunDate",
+						"type": "Expression"
+					}
+				}
+			}
+		],
+		"parameters": {
+			"RunDate": {
+				"type": "string",
+				"defaultValue": "dd-MMM-yyyy"
+			}
+		},
+		"variables": {
+			"HK_SGP_S2L_SPNID": {
+				"type": "String"
+			},
+			"HK_SGP_S2L_SPNSecretName": {
+				"type": "String"
+			},
+			"HK_SGP_S2L_HKSGPSSalesSourceContainerURL": {
+				"type": "String"
+			},
+			"HK_SGP_S2L_HKSGPSalesLandingContainerURL": {
+				"type": "String"
+			},
+			"HK_SGP_S2L_KVURL": {
+				"type": "String"
+			},
+			"HK_SGP_S2L_HKSGPSalesSourceContainerName": {
+				"type": "String"
+			},
+			"HK_SGP_S2L_HKSGPSalesLandingContainerName": {
+				"type": "String"
+			},
+			"HKSGP_S2L_PipelineRunDate": {
+				"type": "String"
+			}
+		},
+		"annotations": []
+	}
+}

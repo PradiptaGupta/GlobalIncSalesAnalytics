@@ -1,0 +1,53 @@
+{
+	"name": "pl-global-sales-source-to-landing",
+	"properties": {
+		"activities": [
+			{
+				"name": "Execute US Source To Landing Pipeline",
+				"type": "ExecutePipeline",
+				"dependsOn": [],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "pl-usdaily-sales-source-to-landing",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": false,
+					"parameters": {
+						"RunDate": {
+							"value": "@pipeline().TriggerTime",
+							"type": "Expression"
+						}
+					}
+				}
+			},
+			{
+				"name": "Execute HK SGP Source To Landing Pipeline",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "Execute US Source To Landing Pipeline",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "pl-HK-SGP-daily-sales-source-to-landing",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true,
+					"parameters": {
+						"RunDate": {
+							"value": "@pipeline().TriggerTime",
+							"type": "Expression"
+						}
+					}
+				}
+			}
+		],
+		"annotations": []
+	}
+}

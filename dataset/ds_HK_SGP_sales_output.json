@@ -1,48 +1,45 @@
 {
-	"name": "ds_us_sales_output",
+	"name": "ds_HK_SGP_sales_output",
 	"properties": {
 		"linkedServiceName": {
 			"referenceName": "lnk_sales_analytics",
 			"type": "LinkedServiceReference",
 			"parameters": {
 				"ContainerURL": {
-					"value": "@dataset().USSalesOutputContainerURL",
+					"value": "@dataset().HKSGPSalesOutputContainerURL",
 					"type": "Expression"
 				},
 				"SPNID": {
-					"value": "@dataset().USSalesOutputSPNID",
+					"value": "@dataset().HKSGPSalesOutputSPNID",
 					"type": "Expression"
 				},
 				"SPNSecretName": {
-					"value": "@dataset().USSalesOutputSPNSecretName",
+					"value": "@dataset().HKSGPSalesOutputSPNSecretName",
 					"type": "Expression"
 				},
 				"KVURL": {
-					"value": "@dataset().USSalesOutputKVURL",
+					"value": "@dataset().HKSGPSalesOutputKVURL",
 					"type": "Expression"
 				}
 			}
 		},
 		"parameters": {
-			"FileName": {
+			"HKSGPSalesOutputKVURL": {
 				"type": "string"
 			},
-			"USSalesOutputKVURL": {
+			"HKSGPSalesOutputContainerURL": {
 				"type": "string"
 			},
-			"USSalesOutputContainerURL": {
+			"HKSGPSalesOutputSPNID": {
 				"type": "string"
 			},
-			"USSalesOutputSPNID": {
+			"HKSGPSalesOutputSPNSecretName": {
 				"type": "string"
 			},
-			"USSalesOutputSPNSecretName": {
+			"HKSGPSalesOutputContainerName": {
 				"type": "string"
 			},
-			"USSalesOutputContainerName": {
-				"type": "string"
-			},
-			"USSalesPipelineRunDate": {
+			"HKSGPSalesPipelineRunDate": {
 				"type": "string"
 			}
 		},
@@ -51,16 +48,12 @@
 		"typeProperties": {
 			"location": {
 				"type": "AzureBlobFSLocation",
-				"fileName": {
-					"value": "@concat('US_',dataset().FileName,'_',formatDateTime(dataset().USSalesPipelineRunDate,'dd-MMM-yyyy'),'.csv')",
-					"type": "Expression"
-				},
 				"folderPath": {
-					"value": "@formatDateTime(dataset().USSalesPipelineRunDate,'dd-MMM-yyyy')",
+					"value": "@formatDateTime(dataset().HKSGPSalesPipelineRunDate,'dd-MMM-yyyy')",
 					"type": "Expression"
 				},
 				"fileSystem": {
-					"value": "@dataset().USSalesOutputContainerName",
+					"value": "@dataset().HKSGPSalesOutputContainerName",
 					"type": "Expression"
 				}
 			},
@@ -70,6 +63,5 @@
 			"quoteChar": "\""
 		},
 		"schema": []
-	},
-	"type": "Microsoft.DataFactory/factories/datasets"
+	}
 }
