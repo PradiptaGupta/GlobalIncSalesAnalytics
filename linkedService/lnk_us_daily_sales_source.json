@@ -1,5 +1,5 @@
 {
-	"name": "lnk_us_sales_datalake",
+	"name": "lnk_sales_analytics_source",
 	"type": "Microsoft.DataFactory/factories/linkedservices",
 	"properties": {
 		"parameters": {

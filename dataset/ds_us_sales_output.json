@@ -2,7 +2,7 @@
 	"name": "ds_us_sales_output",
 	"properties": {
 		"linkedServiceName": {
-			"referenceName": "lnk_us_daily_sales",
+			"referenceName": "lnk_sales_analytics",
 			"type": "LinkedServiceReference",
 			"parameters": {
 				"ContainerURL": {
