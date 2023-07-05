@@ -48,7 +48,7 @@
 			},
 			"DEV_HKSGPSalesSourceContainerName": {
 				"type": "string",
-				"value": "AAA"
+				"value": "dailysales"
 			},
 			"DEV_HKSGPSalesLandingContainerURL": {
 				"type": "string",
