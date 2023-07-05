@@ -75,7 +75,7 @@
 								"type": "Expression"
 							},
 							"HKSGPContainerURL": {
-								"value": "@variables('HK_SGP_S2L_HKSGPSalesLandingContainerURL')",
+								"value": "@variables('HK_SGP_S2L_HKSGPSSalesSourceContainerURL')",
 								"type": "Expression"
 							},
 							"HKSGPSPNID": {
