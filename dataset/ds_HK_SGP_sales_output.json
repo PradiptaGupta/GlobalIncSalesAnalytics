@@ -3,13 +3,59 @@
 	"properties": {
 		"linkedServiceName": {
 			"referenceName": "lnk_sales_analytics",
-			"type": "LinkedServiceReference"
+			"type": "LinkedServiceReference",
+			"parameters": {
+				"ContainerURL": {
+					"value": "@dataset().HKSGPSalesOutputContainerURL",
+					"type": "Expression"
+				},
+				"SPNID": {
+					"value": "@dataset().HKSGPSalesOutputSPNID",
+					"type": "Expression"
+				},
+				"SPNSecretName": {
+					"value": "@dataset().HKSGPSalesOutputSPNSecretName",
+					"type": "Expression"
+				},
+				"KVURL": {
+					"value": "@dataset().HKSGPSalesOutputKVURL",
+					"type": "Expression"
+				}
+			}
+		},
+		"parameters": {
+			"HKSGPSalesOutputKVURL": {
+				"type": "string"
+			},
+			"HKSGPSalesOutputContainerURL": {
+				"type": "string"
+			},
+			"HKSGPSalesOutputSPNID": {
+				"type": "string"
+			},
+			"HKSGPSalesOutputSPNSecretName": {
+				"type": "string"
+			},
+			"HKSGPSalesOutputContainerName": {
+				"type": "string"
+			},
+			"HKSGPSalesPipelineRunDate": {
+				"type": "string"
+			}
 		},
 		"annotations": [],
 		"type": "DelimitedText",
 		"typeProperties": {
 			"location": {
-				"type": "AzureBlobFSLocation"
+				"type": "AzureBlobFSLocation",
+				"folderPath": {
+					"value": "@formatDateTime(dataset().HKSGPSalesPipelineRunDate,'dd-MMM-yyyy')",
+					"type": "Expression"
+				},
+				"fileSystem": {
+					"value": "@dataset().HKSGPSalesOutputContainerName",
+					"type": "Expression"
+				}
 			},
 			"columnDelimiter": ",",
 			"escapeChar": "\\",
