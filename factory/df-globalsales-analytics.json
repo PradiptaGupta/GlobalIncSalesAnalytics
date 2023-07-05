@@ -41,6 +41,10 @@
 			"DEV_SalesConfigFileContainerName": {
 				"type": "string",
 				"value": "dataanalyticslabconfig"
+			},
+			"DEV_HKSGPSalesSourceContainerURL": {
+				"type": "string",
+				"value": "AAA"
 			}
 		}
 	},
