@@ -38,5 +38,21 @@
 	"DEV_SalesConfigFileContainerName": {
 		"type": "string",
 		"value": "dataanalyticslabconfig"
+	},
+	"DEV_HKSGPSalesSourceContainerURL": {
+		"type": "string",
+		"value": "https://asiasalesstorageaccount.dfs.core.windows.net/"
+	},
+	"DEV_HKSGPSalesSourceContainerName": {
+		"type": "string",
+		"value": "dailysales"
+	},
+	"DEV_HKSGPSalesLandingContainerURL": {
+		"type": "string",
+		"value": "https://dataanalyticslabstorage.dfs.core.windows.net/"
+	},
+	"DEV_HKSGPSalesLandingContainerName": {
+		"type": "string",
+		"value": "hk-sgp-sales-source"
 	}
 }

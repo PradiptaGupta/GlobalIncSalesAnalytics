@@ -7,31 +7,55 @@
 			"metadata": "Data Factory name",
 			"defaultValue": "df-globalsales-analytics"
 		},
+		"AzureDataLakeStorage1_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://dataanalyticslabstorage.dfs.core.windows.net/"
+		},
+		"AzureDataLakeStorage1_properties_typeProperties_tenant": {
+			"type": "string",
+			"defaultValue": "c42ed202-1ca3-48c8-bacd-c874383e5727"
+		},
+		"AzureDataLakeStorage1_properties_typeProperties_servicePrincipalId": {
+			"type": "string",
+			"defaultValue": "6314eaa1-2e8e-4c12-bd61-6dabbdb84b83"
+		},
+		"lnk_HK_SGP_daily_sales_source_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "@{linkedService().ContainerURL}"
+		},
+		"lnk_HK_SGP_daily_sales_source_properties_typeProperties_tenant": {
+			"type": "string",
+			"defaultValue": "c42ed202-1ca3-48c8-bacd-c874383e5727"
+		},
+		"lnk_HK_SGP_daily_sales_source_properties_typeProperties_servicePrincipalId": {
+			"type": "string",
+			"defaultValue": "@{linkedService().SPNID}"
+		},
 		"lnk_globalsales_kv_properties_typeProperties_baseUrl": {
 			"type": "string",
 			"defaultValue": "@{linkedService().KVURL}"
 		},
-		"lnk_us_daily_sales_properties_typeProperties_url": {
+		"lnk_sales_analytics_properties_typeProperties_url": {
 			"type": "string",
 			"defaultValue": "@{linkedService().ContainerURL}"
 		},
-		"lnk_us_daily_sales_properties_typeProperties_tenant": {
+		"lnk_sales_analytics_properties_typeProperties_tenant": {
 			"type": "string",
 			"defaultValue": "c42ed202-1ca3-48c8-bacd-c874383e5727"
 		},
-		"lnk_us_daily_sales_properties_typeProperties_servicePrincipalId": {
+		"lnk_sales_analytics_properties_typeProperties_servicePrincipalId": {
 			"type": "string",
 			"defaultValue": "@{linkedService().SPNID}"
 		},
-		"lnk_us_sales_datalake_properties_typeProperties_url": {
+		"lnk_us_daily_sales_source_properties_typeProperties_url": {
 			"type": "string",
 			"defaultValue": "@{linkedService().ContainerURL}"
 		},
-		"lnk_us_sales_datalake_properties_typeProperties_tenant": {
+		"lnk_us_daily_sales_source_properties_typeProperties_tenant": {
 			"type": "string",
 			"defaultValue": "c42ed202-1ca3-48c8-bacd-c874383e5727"
 		},
-		"lnk_us_sales_datalake_properties_typeProperties_servicePrincipalId": {
+		"lnk_us_daily_sales_source_properties_typeProperties_servicePrincipalId": {
 			"type": "string",
 			"defaultValue": "@{linkedService().SPNID}"
 		},
@@ -53,7 +77,390 @@
 	},
 	"resources": [
 		{
-			"name": "[concat(parameters('factoryName'), '/pl-source-to-landing')]",
+			"name": "[concat(parameters('factoryName'), '/pl-HK-SGP-daily-sales-source-to-landing')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Copy HK and SGP daily Sales files from S2L",
+						"type": "Copy",
+						"dependsOn": [
+							{
+								"activity": "Set Run Date",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "DelimitedTextSource",
+								"storeSettings": {
+									"type": "AzureBlobFSReadSettings",
+									"recursive": false,
+									"wildcardFolderPath": {
+										"value": "@formatDateTime(variables('HKSGP_S2L_PipelineRunDate'),'dd-MMM-yyyy')",
+										"type": "Expression"
+									},
+									"wildcardFileName": {
+										"value": "@concat('ASIA_Sales_',formatDateTime(variables('HKSGP_S2L_PipelineRunDate'),'dd-MMM-yyyy'),'.zip')",
+										"type": "Expression"
+									},
+									"enablePartitionDiscovery": false
+								},
+								"formatSettings": {
+									"type": "DelimitedTextReadSettings",
+									"compressionProperties": {
+										"type": "ZipDeflateReadSettings"
+									}
+								}
+							},
+							"sink": {
+								"type": "DelimitedTextSink",
+								"storeSettings": {
+									"type": "AzureBlobFSWriteSettings"
+								},
+								"formatSettings": {
+									"type": "DelimitedTextWriteSettings",
+									"quoteAllText": true,
+									"fileExtension": ".csv"
+								}
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"typeConversion": true,
+								"typeConversionSettings": {
+									"allowDataTruncation": true,
+									"treatBooleanAsNumber": false
+								}
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "ds_HK_SGP_sales_input",
+								"type": "DatasetReference",
+								"parameters": {
+									"HKSGPSalesInputKVURL": {
+										"value": "@variables('HK_SGP_S2L_KVURL')",
+										"type": "Expression"
+									},
+									"HKSGPContainerURL": {
+										"value": "@variables('HK_SGP_S2L_HKSGPSSalesSourceContainerURL')",
+										"type": "Expression"
+									},
+									"HKSGPSPNID": {
+										"value": "@variables('HK_SGP_S2L_SPNID')",
+										"type": "Expression"
+									},
+									"HKSGPSPNSecretName": {
+										"value": "@variables('HK_SGP_S2L_SPNSecretName')",
+										"type": "Expression"
+									},
+									"HKSGPSalesInputContainerName": {
+										"value": "@variables('HK_SGP_S2L_HKSGPSalesSourceContainerName')",
+										"type": "Expression"
+									}
+								}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "ds_HK_SGP_sales_output",
+								"type": "DatasetReference",
+								"parameters": {
+									"HKSGPSalesOutputKVURL": {
+										"value": "@variables('HK_SGP_S2L_KVURL')",
+										"type": "Expression"
+									},
+									"HKSGPSalesOutputContainerURL": {
+										"value": "@variables('HK_SGP_S2L_HKSGPSalesLandingContainerURL')",
+										"type": "Expression"
+									},
+									"HKSGPSalesOutputSPNID": {
+										"value": "@variables('HK_SGP_S2L_SPNID')",
+										"type": "Expression"
+									},
+									"HKSGPSalesOutputSPNSecretName": {
+										"value": "@variables('HK_SGP_S2L_SPNSecretName')",
+										"type": "Expression"
+									},
+									"HKSGPSalesOutputContainerName": {
+										"value": "@variables('HK_SGP_S2L_HKSGPSalesLandingContainerName')",
+										"type": "Expression"
+									},
+									"HKSGPSalesPipelineRunDate": {
+										"value": "@variables('HKSGP_S2L_PipelineRunDate')",
+										"type": "Expression"
+									}
+								}
+							}
+						]
+					},
+					{
+						"name": "Set SPN ID",
+						"type": "SetVariable",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"variableName": "HK_SGP_S2L_SPNID",
+							"value": {
+								"value": "@if(equals(pipeline().globalParameters.Environment,'DEV'),pipeline().globalParameters.DEV_SPNID, if(equals(pipeline().globalParameters.Environment,'QA'), 'Bx', if(equals(pipeline().globalParameters.Environment,'UAT'), 'Bx', 'C')))",
+								"type": "Expression"
+							}
+						}
+					},
+					{
+						"name": "Set SPN SecretName",
+						"type": "SetVariable",
+						"dependsOn": [
+							{
+								"activity": "Set SPN ID",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"variableName": "HK_SGP_S2L_SPNSecretName",
+							"value": {
+								"value": "@if(equals(pipeline().globalParameters.Environment,'DEV'),pipeline().globalParameters.DEV_SPNSecretName, if(equals(pipeline().globalParameters.Environment,'QA'), 'Bx', if(equals(pipeline().globalParameters.Environment,'UAT'), 'Bx', 'C')))",
+								"type": "Expression"
+							}
+						}
+					},
+					{
+						"name": "Set SourceContainer URL",
+						"type": "SetVariable",
+						"dependsOn": [
+							{
+								"activity": "Set SPN SecretName",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"variableName": "HK_SGP_S2L_HKSGPSSalesSourceContainerURL",
+							"value": {
+								"value": "@if(equals(pipeline().globalParameters.Environment,'DEV'),pipeline().globalParameters.DEV_HKSGPSalesSourceContainerURL, if(equals(pipeline().globalParameters.Environment,'QA'), 'Bx', if(equals(pipeline().globalParameters.Environment,'UAT'), 'Bx', 'C')))",
+								"type": "Expression"
+							}
+						}
+					},
+					{
+						"name": "Set Source Container Name",
+						"type": "SetVariable",
+						"dependsOn": [
+							{
+								"activity": "Set SourceContainer URL",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"variableName": "HK_SGP_S2L_HKSGPSalesSourceContainerName",
+							"value": {
+								"value": "@if(equals(pipeline().globalParameters.Environment,'DEV'),pipeline().globalParameters.DEV_HKSGPSalesSourceContainerName, if(equals(pipeline().globalParameters.Environment,'QA'), 'Bx', if(equals(pipeline().globalParameters.Environment,'UAT'), 'Bx', 'C')))",
+								"type": "Expression"
+							}
+						}
+					},
+					{
+						"name": "Set Landing Container URL",
+						"type": "SetVariable",
+						"dependsOn": [
+							{
+								"activity": "Set Source Container Name",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"variableName": "HK_SGP_S2L_HKSGPSalesLandingContainerURL",
+							"value": {
+								"value": "@if(equals(pipeline().globalParameters.Environment,'DEV'),pipeline().globalParameters.DEV_HKSGPSalesLandingContainerURL, if(equals(pipeline().globalParameters.Environment,'QA'), 'Bx', if(equals(pipeline().globalParameters.Environment,'UAT'), 'Bx', 'C')))",
+								"type": "Expression"
+							}
+						}
+					},
+					{
+						"name": "Set Landing Container Name",
+						"type": "SetVariable",
+						"dependsOn": [
+							{
+								"activity": "Set Landing Container URL",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"variableName": "HK_SGP_S2L_HKSGPSalesLandingContainerName",
+							"value": {
+								"value": "@if(equals(pipeline().globalParameters.Environment,'DEV'),pipeline().globalParameters.DEV_HKSGPSalesLandingContainerName, if(equals(pipeline().globalParameters.Environment,'QA'), 'Bx', if(equals(pipeline().globalParameters.Environment,'UAT'), 'Bx', 'C')))",
+								"type": "Expression"
+							}
+						}
+					},
+					{
+						"name": "Set KV URL",
+						"type": "SetVariable",
+						"dependsOn": [
+							{
+								"activity": "Set Landing Container Name",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"variableName": "HK_SGP_S2L_KVURL",
+							"value": {
+								"value": "@if(equals(pipeline().globalParameters.Environment,'DEV'),pipeline().globalParameters.DEV_KVURL, if(equals(pipeline().globalParameters.Environment,'QA'), 'Bx', if(equals(pipeline().globalParameters.Environment,'UAT'), 'Bx', 'C')))",
+								"type": "Expression"
+							}
+						}
+					},
+					{
+						"name": "Set Run Date",
+						"type": "SetVariable",
+						"dependsOn": [
+							{
+								"activity": "Set KV URL",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"variableName": "HKSGP_S2L_PipelineRunDate",
+							"value": {
+								"value": "@pipeline().parameters.RunDate",
+								"type": "Expression"
+							}
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"parameters": {
+					"RunDate": {
+						"type": "string",
+						"defaultValue": "dd-MMM-yyyy"
+					}
+				},
+				"variables": {
+					"HK_SGP_S2L_SPNID": {
+						"type": "String"
+					},
+					"HK_SGP_S2L_SPNSecretName": {
+						"type": "String"
+					},
+					"HK_SGP_S2L_HKSGPSSalesSourceContainerURL": {
+						"type": "String"
+					},
+					"HK_SGP_S2L_HKSGPSalesLandingContainerURL": {
+						"type": "String"
+					},
+					"HK_SGP_S2L_KVURL": {
+						"type": "String"
+					},
+					"HK_SGP_S2L_HKSGPSalesSourceContainerName": {
+						"type": "String"
+					},
+					"HK_SGP_S2L_HKSGPSalesLandingContainerName": {
+						"type": "String"
+					},
+					"HKSGP_S2L_PipelineRunDate": {
+						"type": "String"
+					}
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/ds_HK_SGP_sales_input')]",
+				"[concat(variables('factoryId'), '/datasets/ds_HK_SGP_sales_output')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/pl-global-sales-source-to-landing')]",
 			"type": "Microsoft.DataFactory/factories/pipelines",
 			"apiVersion": "2018-06-01",
 			"properties": {
@@ -65,7 +472,33 @@
 						"userProperties": [],
 						"typeProperties": {
 							"pipeline": {
-								"referenceName": "pl-usdailysales-source-to-landing",
+								"referenceName": "pl-usdaily-sales-source-to-landing",
+								"type": "PipelineReference"
+							},
+							"waitOnCompletion": false,
+							"parameters": {
+								"RunDate": {
+									"value": "@pipeline().TriggerTime",
+									"type": "Expression"
+								}
+							}
+						}
+					},
+					{
+						"name": "Execute HK SGP Source To Landing Pipeline",
+						"type": "ExecutePipeline",
+						"dependsOn": [
+							{
+								"activity": "Execute US Source To Landing Pipeline",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"pipeline": {
+								"referenceName": "pl-HK-SGP-daily-sales-source-to-landing",
 								"type": "PipelineReference"
 							},
 							"waitOnCompletion": true,
@@ -85,11 +518,12 @@
 				"annotations": []
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/pipelines/pl-usdailysales-source-to-landing')]"
+				"[concat(variables('factoryId'), '/pipelines/pl-usdaily-sales-source-to-landing')]",
+				"[concat(variables('factoryId'), '/pipelines/pl-HK-SGP-daily-sales-source-to-landing')]"
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/pl-usdailysales-source-to-landing')]",
+			"name": "[concat(parameters('factoryName'), '/pl-usdaily-sales-source-to-landing')]",
 			"type": "Microsoft.DataFactory/factories/pipelines",
 			"apiVersion": "2018-06-01",
 			"properties": {
@@ -99,7 +533,7 @@
 						"type": "Lookup",
 						"dependsOn": [
 							{
-								"activity": "Set variable10",
+								"activity": "Set Run Date",
 								"dependencyConditions": [
 									"Succeeded"
 								]
@@ -297,7 +731,7 @@
 						}
 					},
 					{
-						"name": "Set variable1",
+						"name": "Set Config ContainerURL",
 						"type": "SetVariable",
 						"dependsOn": [],
 						"policy": {
@@ -317,11 +751,11 @@
 						}
 					},
 					{
-						"name": "Set variable2",
+						"name": "Set SPN ID",
 						"type": "SetVariable",
 						"dependsOn": [
 							{
-								"activity": "Set variable1",
+								"activity": "Set Config ContainerURL",
 								"dependencyConditions": [
 									"Succeeded"
 								]
@@ -344,11 +778,11 @@
 						}
 					},
 					{
-						"name": "Set variable3",
+						"name": "Set SPN Secret Name",
 						"type": "SetVariable",
 						"dependsOn": [
 							{
-								"activity": "Set variable2",
+								"activity": "Set SPN ID",
 								"dependencyConditions": [
 									"Succeeded"
 								]
@@ -371,11 +805,11 @@
 						}
 					},
 					{
-						"name": "Set variable4",
+						"name": "Set SourceContainerURL",
 						"type": "SetVariable",
 						"dependsOn": [
 							{
-								"activity": "Set variable3",
+								"activity": "Set SPN Secret Name",
 								"dependencyConditions": [
 									"Succeeded"
 								]
@@ -398,11 +832,11 @@
 						}
 					},
 					{
-						"name": "Set variable5",
+						"name": "Set Landing container URL",
 						"type": "SetVariable",
 						"dependsOn": [
 							{
-								"activity": "Set variable4",
+								"activity": "Set SourceContainerURL",
 								"dependencyConditions": [
 									"Succeeded"
 								]
@@ -425,11 +859,11 @@
 						}
 					},
 					{
-						"name": "Set variable6",
+						"name": "Set KV URL",
 						"type": "SetVariable",
 						"dependsOn": [
 							{
-								"activity": "Set variable5",
+								"activity": "Set Landing container URL",
 								"dependencyConditions": [
 									"Succeeded"
 								]
@@ -452,11 +886,11 @@
 						}
 					},
 					{
-						"name": "Set variable7",
+						"name": "Set Config Container Name",
 						"type": "SetVariable",
 						"dependsOn": [
 							{
-								"activity": "Set variable6",
+								"activity": "Set KV URL",
 								"dependencyConditions": [
 									"Succeeded"
 								]
@@ -479,11 +913,11 @@
 						}
 					},
 					{
-						"name": "Set variable8",
+						"name": "Set Source Container Name",
 						"type": "SetVariable",
 						"dependsOn": [
 							{
-								"activity": "Set variable7",
+								"activity": "Set Config Container Name",
 								"dependencyConditions": [
 									"Succeeded"
 								]
@@ -506,11 +940,11 @@
 						}
 					},
 					{
-						"name": "Set variable9",
+						"name": "Set Landing Container Name",
 						"type": "SetVariable",
 						"dependsOn": [
 							{
-								"activity": "Set variable8",
+								"activity": "Set Source Container Name",
 								"dependencyConditions": [
 									"Succeeded"
 								]
@@ -533,11 +967,11 @@
 						}
 					},
 					{
-						"name": "Set variable10",
+						"name": "Set Run Date",
 						"type": "SetVariable",
 						"dependsOn": [
 							{
-								"activity": "Set variable9",
+								"activity": "Set Landing Container Name",
 								"dependencyConditions": [
 									"Succeeded"
 								]
@@ -612,12 +1046,158 @@
 			]
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/ds_HK_SGP_sales_input')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "lnk_HK_SGP_daily_sales_source",
+					"type": "LinkedServiceReference",
+					"parameters": {
+						"KVURL": {
+							"value": "@dataset().HKSGPSalesInputKVURL",
+							"type": "Expression"
+						},
+						"ContainerURL": {
+							"value": "@dataset().HKSGPContainerURL",
+							"type": "Expression"
+						},
+						"SPNID": {
+							"value": "@dataset().HKSGPSPNID",
+							"type": "Expression"
+						},
+						"SPNSecretName": {
+							"value": "@dataset().HKSGPSPNSecretName",
+							"type": "Expression"
+						}
+					}
+				},
+				"parameters": {
+					"HKSGPSalesInputKVURL": {
+						"type": "string"
+					},
+					"HKSGPContainerURL": {
+						"type": "string"
+					},
+					"HKSGPSPNID": {
+						"type": "string"
+					},
+					"HKSGPSPNSecretName": {
+						"type": "string"
+					},
+					"HKSGPSalesInputContainerName": {
+						"type": "string"
+					}
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"fileName": "ASIA_Sales_05-Jul-2023.zip",
+						"folderPath": "05-Jul-2023",
+						"fileSystem": {
+							"value": "@dataset().HKSGPSalesInputContainerName",
+							"type": "Expression"
+						}
+					},
+					"columnDelimiter": ",",
+					"compressionCodec": "ZipDeflate",
+					"compressionLevel": "Optimal",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": [
+					{
+						"name": "PK\u0003\u0004\u0014\u0000\u0000\u0000\b\u0000jk�V�!�ir\u0002\u0000\u0000�\u0004\u0000\u0000 \u0000\u0000\u0000HKG_Product_List_05-Jul-2023.csvm�Ko�0\u0014��#��bQ��3J���\f\t\u0014f�f\u001a���L�U'F~P���u�B\u0019v������T���\u0006bY0�\u001e\u000e\u000bZ�\u000e\tӹ�[�e�9��ak�j\u001c�}�6�\u0003�k8���\u0018�{�\"&��3�p�\u0004�\u001a\u001evL��*�r�w\f\u0016�k�WV9\u0013�:\u001d�0Zl7�b\u001a>�����\u0004�\u0016��Ї��JC*hm8.",
+						"type": "String"
+					}
+				]
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/lnk_HK_SGP_daily_sales_source')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ds_HK_SGP_sales_output')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "lnk_sales_analytics",
+					"type": "LinkedServiceReference",
+					"parameters": {
+						"ContainerURL": {
+							"value": "@dataset().HKSGPSalesOutputContainerURL",
+							"type": "Expression"
+						},
+						"SPNID": {
+							"value": "@dataset().HKSGPSalesOutputSPNID",
+							"type": "Expression"
+						},
+						"SPNSecretName": {
+							"value": "@dataset().HKSGPSalesOutputSPNSecretName",
+							"type": "Expression"
+						},
+						"KVURL": {
+							"value": "@dataset().HKSGPSalesOutputKVURL",
+							"type": "Expression"
+						}
+					}
+				},
+				"parameters": {
+					"HKSGPSalesOutputKVURL": {
+						"type": "string"
+					},
+					"HKSGPSalesOutputContainerURL": {
+						"type": "string"
+					},
+					"HKSGPSalesOutputSPNID": {
+						"type": "string"
+					},
+					"HKSGPSalesOutputSPNSecretName": {
+						"type": "string"
+					},
+					"HKSGPSalesOutputContainerName": {
+						"type": "string"
+					},
+					"HKSGPSalesPipelineRunDate": {
+						"type": "string"
+					}
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"folderPath": {
+							"value": "@formatDateTime(dataset().HKSGPSalesPipelineRunDate,'dd-MMM-yyyy')",
+							"type": "Expression"
+						},
+						"fileSystem": {
+							"value": "@dataset().HKSGPSalesOutputContainerName",
+							"type": "Expression"
+						}
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/lnk_sales_analytics')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/ds_us_sales_input')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
 			"properties": {
 				"linkedServiceName": {
-					"referenceName": "lnk_us_sales_datalake",
+					"referenceName": "lnk_us_daily_sales_source",
 					"type": "LinkedServiceReference",
 					"parameters": {
 						"KVURL": {
@@ -695,7 +1275,7 @@
 				]
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/lnk_us_sales_datalake')]"
+				"[concat(variables('factoryId'), '/linkedServices/lnk_us_daily_sales_source')]"
 			]
 		},
 		{
@@ -704,7 +1284,7 @@
 			"apiVersion": "2018-06-01",
 			"properties": {
 				"linkedServiceName": {
-					"referenceName": "lnk_us_daily_sales",
+					"referenceName": "lnk_sales_analytics",
 					"type": "LinkedServiceReference",
 					"parameters": {
 						"ContainerURL": {
@@ -774,7 +1354,7 @@
 				"schema": []
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/lnk_us_daily_sales')]"
+				"[concat(variables('factoryId'), '/linkedServices/lnk_sales_analytics')]"
 			]
 		},
 		{
@@ -847,29 +1427,43 @@
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/lnk_globalsales_kv')]",
+			"name": "[concat(parameters('factoryName'), '/AzureDataLakeStorage1')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureBlobFS",
+				"typeProperties": {
+					"url": "[parameters('AzureDataLakeStorage1_properties_typeProperties_url')]",
+					"tenant": "[parameters('AzureDataLakeStorage1_properties_typeProperties_tenant')]",
+					"servicePrincipalId": "[parameters('AzureDataLakeStorage1_properties_typeProperties_servicePrincipalId')]",
+					"servicePrincipalCredentialType": "ServicePrincipalKey",
+					"servicePrincipalCredential": {
+						"type": "AzureKeyVaultSecret",
+						"store": {
+							"referenceName": "lnk_globalsales_kv",
+							"type": "LinkedServiceReference",
+							"parameters": {
+								"KVURL": "https://kv-globalsales-analytics.vault.azure.net/"
+							}
+						},
+						"secretName": "globalsales-analytics-secret"
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/lnk_globalsales_kv')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/lnk_HK_SGP_daily_sales_source')]",
 			"type": "Microsoft.DataFactory/factories/linkedServices",
 			"apiVersion": "2018-06-01",
 			"properties": {
 				"parameters": {
 					"KVURL": {
 						"type": "string"
-					}
-				},
-				"annotations": [],
-				"type": "AzureKeyVault",
-				"typeProperties": {
-					"baseUrl": "[parameters('lnk_globalsales_kv_properties_typeProperties_baseUrl')]"
-				}
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/lnk_us_daily_sales')]",
-			"type": "Microsoft.DataFactory/factories/linkedServices",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"parameters": {
+					},
 					"ContainerURL": {
 						"type": "string"
 					},
@@ -878,17 +1472,14 @@
 					},
 					"SPNSecretName": {
 						"type": "string"
-					},
-					"KVURL": {
-						"type": "string"
 					}
 				},
 				"annotations": [],
 				"type": "AzureBlobFS",
 				"typeProperties": {
-					"url": "[parameters('lnk_us_daily_sales_properties_typeProperties_url')]",
-					"tenant": "[parameters('lnk_us_daily_sales_properties_typeProperties_tenant')]",
-					"servicePrincipalId": "[parameters('lnk_us_daily_sales_properties_typeProperties_servicePrincipalId')]",
+					"url": "[parameters('lnk_HK_SGP_daily_sales_source_properties_typeProperties_url')]",
+					"tenant": "[parameters('lnk_HK_SGP_daily_sales_source_properties_typeProperties_tenant')]",
+					"servicePrincipalId": "[parameters('lnk_HK_SGP_daily_sales_source_properties_typeProperties_servicePrincipalId')]",
 					"servicePrincipalCredentialType": "ServicePrincipalKey",
 					"servicePrincipalCredential": {
 						"type": "AzureKeyVaultSecret",
@@ -914,7 +1505,74 @@
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/lnk_us_sales_datalake')]",
+			"name": "[concat(parameters('factoryName'), '/lnk_globalsales_kv')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"parameters": {
+					"KVURL": {
+						"type": "string"
+					}
+				},
+				"annotations": [],
+				"type": "AzureKeyVault",
+				"typeProperties": {
+					"baseUrl": "[parameters('lnk_globalsales_kv_properties_typeProperties_baseUrl')]"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/lnk_sales_analytics')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"parameters": {
+					"ContainerURL": {
+						"type": "string"
+					},
+					"SPNID": {
+						"type": "string"
+					},
+					"SPNSecretName": {
+						"type": "string"
+					},
+					"KVURL": {
+						"type": "string"
+					}
+				},
+				"annotations": [],
+				"type": "AzureBlobFS",
+				"typeProperties": {
+					"url": "[parameters('lnk_sales_analytics_properties_typeProperties_url')]",
+					"tenant": "[parameters('lnk_sales_analytics_properties_typeProperties_tenant')]",
+					"servicePrincipalId": "[parameters('lnk_sales_analytics_properties_typeProperties_servicePrincipalId')]",
+					"servicePrincipalCredentialType": "ServicePrincipalKey",
+					"servicePrincipalCredential": {
+						"type": "AzureKeyVaultSecret",
+						"store": {
+							"referenceName": "lnk_globalsales_kv",
+							"type": "LinkedServiceReference",
+							"parameters": {
+								"KVURL": {
+									"value": "@linkedService().KVURL",
+									"type": "Expression"
+								}
+							}
+						},
+						"secretName": {
+							"value": "@linkedService().SPNSecretName",
+							"type": "Expression"
+						}
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/lnk_globalsales_kv')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/lnk_us_daily_sales_source')]",
 			"type": "Microsoft.DataFactory/factories/linkedServices",
 			"apiVersion": "2018-06-01",
 			"properties": {
@@ -935,9 +1593,9 @@
 				"annotations": [],
 				"type": "AzureBlobFS",
 				"typeProperties": {
-					"url": "[parameters('lnk_us_sales_datalake_properties_typeProperties_url')]",
-					"tenant": "[parameters('lnk_us_sales_datalake_properties_typeProperties_tenant')]",
-					"servicePrincipalId": "[parameters('lnk_us_sales_datalake_properties_typeProperties_servicePrincipalId')]",
+					"url": "[parameters('lnk_us_daily_sales_source_properties_typeProperties_url')]",
+					"tenant": "[parameters('lnk_us_daily_sales_source_properties_typeProperties_tenant')]",
+					"servicePrincipalId": "[parameters('lnk_us_daily_sales_source_properties_typeProperties_servicePrincipalId')]",
 					"servicePrincipalCredentialType": "ServicePrincipalKey",
 					"servicePrincipalCredential": {
 						"type": "AzureKeyVaultSecret",
