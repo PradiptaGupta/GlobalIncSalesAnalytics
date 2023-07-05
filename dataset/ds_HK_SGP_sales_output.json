@@ -1,0 +1,21 @@
+{
+	"name": "ds_HK_SGP_sales_output",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "lnk_sales_analytics",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": []
+	}
+}

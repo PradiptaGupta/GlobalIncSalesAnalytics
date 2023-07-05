@@ -1,0 +1,31 @@
+{
+	"name": "ds_HK_SGP_sales_input",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "lnk_HK_SGP_daily_sales_source",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": "ASIA_Sales_05-Jul-2023.zip",
+				"folderPath": "05-Jul-2023",
+				"fileSystem": "dailysales"
+			},
+			"columnDelimiter": ",",
+			"compressionCodec": "ZipDeflate",
+			"compressionLevel": "Optimal",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": [
+			{
+				"name": "PK\u0003\u0004\u0014\u0000\u0000\u0000\b\u0000jk�V�!�ir\u0002\u0000\u0000�\u0004\u0000\u0000 \u0000\u0000\u0000HKG_Product_List_05-Jul-2023.csvm�Ko�0\u0014��#��bQ��3J���\f\t\u0014f�f\u001a���L�U'F~P���u�B\u0019v������T���\u0006bY0�\u001e\u000e\u000bZ�\u000e\tӹ�[�e�9��ak�j\u001c�}�6�\u0003�k8���\u0018�{�\"&��3�p�\u0004�\u001a\u001evL��*�r�w\f\u0016�k�WV9\u0013�:\u001d�0Zl7�b\u001a>�����\u0004�\u0016��Ї��JC*hm8.",
+				"type": "String"
+			}
+		]
+	}
+}
