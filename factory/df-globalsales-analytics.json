@@ -44,7 +44,7 @@
 			},
 			"DEV_HKSGPSalesSourceContainerURL": {
 				"type": "string",
-				"value": "AAA"
+				"value": "https://asiasalesstorageaccount.dfs.core.windows.net/"
 			},
 			"DEV_HKSGPSalesSourceContainerName": {
 				"type": "string",
