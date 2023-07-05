@@ -52,7 +52,7 @@
 			},
 			"DEV_HKSGPSalesLandingContainerURL": {
 				"type": "string",
-				"value": "AAA"
+				"value": "https://dataanalyticslabstorage.dfs.core.windows.net/"
 			},
 			"DEV_HKSGPSalesLandingContainerName": {
 				"type": "string",
