@@ -20,6 +20,14 @@
 						"storeSettings": {
 							"type": "AzureBlobFSReadSettings",
 							"recursive": false,
+							"wildcardFolderPath": {
+								"value": "@formatDateTime(variables('HKSGP_S2L_PipelineRunDate'),'dd-MMM-yyyy')",
+								"type": "Expression"
+							},
+							"wildcardFileName": {
+								"value": "@concat('ASIA_Sales_',formatDateTime(variables('HKSGP_S2L_PipelineRunDate'),'dd-MMM-yyyy'),'.zip')",
+								"type": "Expression"
+							},
 							"enablePartitionDiscovery": false
 						},
 						"formatSettings": {
@@ -53,7 +61,29 @@
 				"inputs": [
 					{
 						"referenceName": "ds_HK_SGP_sales_input",
-						"type": "DatasetReference"
+						"type": "DatasetReference",
+						"parameters": {
+							"HKSGPSalesInputKVURL": {
+								"value": "@variables('HK_SGP_S2L_KVURL')",
+								"type": "Expression"
+							},
+							"HKSGPContainerURL": {
+								"value": "@variables('HK_SGP_S2L_HKSGPSalesLandingContainerURL')",
+								"type": "Expression"
+							},
+							"HKSGPSPNID": {
+								"value": "@variables('HK_SGP_S2L_SPNID')",
+								"type": "Expression"
+							},
+							"HKSGPSPNSecretName": {
+								"value": "@variables('HK_SGP_S2L_SPNSecretName')",
+								"type": "Expression"
+							},
+							"HKSGPSalesInputContainerName": {
+								"value": "@variables('HK_SGP_S2L_HKSGPSalesSourceContainerName')",
+								"type": "Expression"
+							}
+						}
 					}
 				],
 				"outputs": [
@@ -64,6 +94,40 @@
 				]
 			}
 		],
+		"parameters": {
+			"RunDate": {
+				"type": "string"
+			}
+		},
+		"variables": {
+			"HK_SGP_S2L_SalesConfigFileContainerURL": {
+				"type": "String"
+			},
+			"HK_SGP_S2L_SPNID": {
+				"type": "String"
+			},
+			"HK_SGP_S2L_SPNSecretName": {
+				"type": "String"
+			},
+			"HK_SGP_S2L_HKSGPSSalesSourceContainerURL": {
+				"type": "String"
+			},
+			"HK_SGP_S2L_HKSGPSalesLandingContainerURL": {
+				"type": "String"
+			},
+			"HK_SGP_S2L_KVURL": {
+				"type": "String"
+			},
+			"HK_SGP_S2L_HKSGPSalesSourceContainerName": {
+				"type": "String"
+			},
+			"HK_SGP_S2L_HKSGPSalesLandingContainerName": {
+				"type": "String"
+			},
+			"HKSGP_S2L_PipelineRunDate": {
+				"type": "String"
+			}
+		},
 		"annotations": []
 	}
 }

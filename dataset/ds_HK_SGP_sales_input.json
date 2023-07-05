@@ -3,7 +3,42 @@
 	"properties": {
 		"linkedServiceName": {
 			"referenceName": "lnk_HK_SGP_daily_sales_source",
-			"type": "LinkedServiceReference"
+			"type": "LinkedServiceReference",
+			"parameters": {
+				"KVURL": {
+					"value": "@dataset().HKSGPSalesInputKVURL",
+					"type": "Expression"
+				},
+				"ContainerURL": {
+					"value": "@dataset().HKSGPContainerURL",
+					"type": "Expression"
+				},
+				"SPNID": {
+					"value": "@dataset().HKSGPSPNID",
+					"type": "Expression"
+				},
+				"SPNSecretName": {
+					"value": "@dataset().HKSGPSPNSecretName",
+					"type": "Expression"
+				}
+			}
+		},
+		"parameters": {
+			"HKSGPSalesInputKVURL": {
+				"type": "string"
+			},
+			"HKSGPContainerURL": {
+				"type": "string"
+			},
+			"HKSGPSPNID": {
+				"type": "string"
+			},
+			"HKSGPSPNSecretName": {
+				"type": "string"
+			},
+			"HKSGPSalesInputContainerName": {
+				"type": "string"
+			}
 		},
 		"annotations": [],
 		"type": "DelimitedText",
@@ -12,7 +47,10 @@
 				"type": "AzureBlobFSLocation",
 				"fileName": "ASIA_Sales_05-Jul-2023.zip",
 				"folderPath": "05-Jul-2023",
-				"fileSystem": "dailysales"
+				"fileSystem": {
+					"value": "@dataset().HKSGPSalesInputContainerName",
+					"type": "Expression"
+				}
 			},
 			"columnDelimiter": ",",
 			"compressionCodec": "ZipDeflate",
