@@ -53,6 +53,10 @@
 			"DEV_HKSGPSalesLandingContainerURL": {
 				"type": "string",
 				"value": "AAA"
+			},
+			"DEV_HKSGPSalesLandingContainerName": {
+				"type": "string",
+				"value": "AAA"
 			}
 		}
 	},
