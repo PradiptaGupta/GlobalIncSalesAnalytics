@@ -338,7 +338,8 @@
 		],
 		"parameters": {
 			"RunDate": {
-				"type": "string"
+				"type": "string",
+				"defaultValue": "dd-MMM-yyyy"
 			}
 		},
 		"variables": {
