@@ -45,6 +45,10 @@
 			"DEV_HKSGPSalesSourceContainerURL": {
 				"type": "string",
 				"value": "AAA"
+			},
+			"DEV_HKSGPSalesSourceContainerName": {
+				"type": "string",
+				"value": "AAA"
 			}
 		}
 	},
