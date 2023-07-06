@@ -9,7 +9,7 @@
 				"userProperties": [],
 				"typeProperties": {
 					"pipeline": {
-						"referenceName": "pl-usdaily-sales-source-to-landing",
+						"referenceName": "pl-us-daily-sales-source-to-landing",
 						"type": "PipelineReference"
 					},
 					"waitOnCompletion": false,
