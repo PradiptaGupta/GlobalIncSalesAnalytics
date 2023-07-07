@@ -69,6 +69,10 @@
 			"DEV_JP_SFTPURL": {
 				"type": "string",
 				"value": "japansalesstorageaccount.blob.core.windows.net"
+			},
+			"DEV_JPSalesLandingContainerName": {
+				"type": "string",
+				"value": "jp-sales-source"
 			}
 		}
 	},
