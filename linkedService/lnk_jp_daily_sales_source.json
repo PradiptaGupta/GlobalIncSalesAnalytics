@@ -1,16 +1,46 @@
 {
 	"name": "lnk_jp_daily_sales_source",
-	"type": "Microsoft.DataFactory/factories/linkedservices",
 	"properties": {
+		"parameters": {
+			"JP_SFTPURL": {
+				"type": "string"
+			},
+			"JP_SFTPUserName": {
+				"type": "string"
+			},
+			"KVURL": {
+				"type": "string"
+			},
+			"KVSecretName": {
+				"type": "string"
+			}
+		},
 		"annotations": [],
 		"type": "Sftp",
 		"typeProperties": {
-			"host": "japansalesstorageaccount.blob.core.windows.net",
+			"host": "@{linkedService().JP_SFTPURL}",
 			"port": 22,
 			"skipHostKeyValidation": true,
 			"authenticationType": "Basic",
-			"userName": "japansalesstorageaccount.jpsftpuser",
-			"encryptedCredential": "ew0KICAiVmVyc2lvbiI6ICIyMDE3LTExLTMwIiwNCiAgIlByb3RlY3Rpb25Nb2RlIjogIktleSIsDQogICJTZWNyZXRDb250ZW50VHlwZSI6ICJQbGFpbnRleHQiLA0KICAiQ3JlZGVudGlhbElkIjogIkRBVEFGQUNUT1JZQDAwQjNBQTgwLTE4NDItNEUxQy04MEFDLTc4REYwRkRFQUM5RV80NThiNmRmMC05NWRmLTQyMzUtOTE1MC0wZDdkOWFlNmI0NDIiDQp9"
+			"userName": "@{linkedService().JP_SFTPUserName}",
+			"password": {
+				"type": "AzureKeyVaultSecret",
+				"store": {
+					"referenceName": "lnk_globalsales_kv",
+					"type": "LinkedServiceReference",
+					"parameters": {
+						"KVURL": {
+							"value": "@linkedService().KVURL",
+							"type": "Expression"
+						}
+					}
+				},
+				"secretName": {
+					"value": "@linkedService().KVSecretName",
+					"type": "Expression"
+				}
+			}
 		}
-	}
+	},
+	"type": "Microsoft.DataFactory/factories/linkedservices"
 }
