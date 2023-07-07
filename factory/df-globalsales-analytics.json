@@ -61,6 +61,10 @@
 			"DEV_JP_SFTPUserPasswordSecret": {
 				"type": "string",
 				"value": "jp-sales-sftp-user-password"
+			},
+			"DEV_JP_SFTPUserName": {
+				"type": "string",
+				"value": "japansalesstorageaccount.jpsftpuser"
 			}
 		}
 	},
