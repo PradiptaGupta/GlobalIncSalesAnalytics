@@ -58,7 +58,7 @@
 				"type": "string",
 				"value": "hk-sgp-sales-source"
 			},
-			"DEV_JP_SFTPUserPassword": {
+			"DEV_JP_SFTPUserPasswordSecret": {
 				"type": "string",
 				"value": "jp-sales-sftp-user-password"
 			}
