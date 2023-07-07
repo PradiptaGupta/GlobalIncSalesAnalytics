@@ -57,6 +57,10 @@
 			"DEV_HKSGPSalesLandingContainerName": {
 				"type": "string",
 				"value": "hk-sgp-sales-source"
+			},
+			"DEV_JP_SFTPUserPassword": {
+				"type": "string",
+				"value": "jp-sales-sftp-user-password"
 			}
 		}
 	},
