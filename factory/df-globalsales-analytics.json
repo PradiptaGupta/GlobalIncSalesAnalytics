@@ -65,6 +65,10 @@
 			"DEV_JP_SFTPUserName": {
 				"type": "string",
 				"value": "japansalesstorageaccount.jpsftpuser"
+			},
+			"DEV_JP_SFTPURL": {
+				"type": "string",
+				"value": "japansalesstorageaccount.blob.core.windows.net"
 			}
 		}
 	},
