@@ -35,13 +35,21 @@
 			},
 			"JPSFTPKVURL": {
 				"type": "string"
+			},
+			"JPSalesPipelineRunDate": {
+				"type": "string"
 			}
 		},
 		"annotations": [],
 		"type": "DelimitedText",
 		"typeProperties": {
 			"location": {
-				"type": "SftpLocation"
+				"type": "SftpLocation",
+				"fileName": "*.csv",
+				"folderPath": {
+					"value": "@formatDateTime(dataset().JPSalesPipelineRunDate,'dd-MMM-yyyy')",
+					"type": "Expression"
+				}
 			},
 			"columnDelimiter": ",",
 			"escapeChar": "\\",

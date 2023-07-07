@@ -1,0 +1,67 @@
+{
+	"name": "ds_jp_sales_output",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "lnk_sales_analytics",
+			"type": "LinkedServiceReference",
+			"parameters": {
+				"ContainerURL": {
+					"value": "@dataset().JPLandingContainerURL",
+					"type": "Expression"
+				},
+				"SPNID": {
+					"value": "@dataset().SPNID",
+					"type": "Expression"
+				},
+				"SPNSecretName": {
+					"value": "@dataset().SPNSecretName",
+					"type": "Expression"
+				},
+				"KVURL": {
+					"value": "@dataset().KVURL",
+					"type": "Expression"
+				}
+			}
+		},
+		"parameters": {
+			"JPLandingContainerURL": {
+				"type": "string"
+			},
+			"SPNID": {
+				"type": "string"
+			},
+			"SPNSecretName": {
+				"type": "string"
+			},
+			"KVURL": {
+				"type": "string"
+			},
+			"JPLandingContainerName": {
+				"type": "string"
+			},
+			"JPPipelineRundate": {
+				"type": "string"
+			}
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"folderPath": {
+					"value": "@formatDateTime(dataset().JPPipelineRundate,'dd-MMM-yyyy')",
+					"type": "Expression"
+				},
+				"fileSystem": {
+					"value": "@dataset().JPLandingContainerName",
+					"type": "Expression"
+				}
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": []
+	}
+}

@@ -5,7 +5,14 @@
 			{
 				"name": "Copy daily sales data for Japan",
 				"type": "Copy",
-				"dependsOn": [],
+				"dependsOn": [
+					{
+						"activity": "Set JP Landing Container Name",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
 				"policy": {
 					"timeout": "0.12:00:00",
 					"retry": 0,
@@ -27,7 +34,26 @@
 							"type": "DelimitedTextReadSettings"
 						}
 					},
-					"enableStaging": false
+					"sink": {
+						"type": "DelimitedTextSink",
+						"storeSettings": {
+							"type": "AzureBlobFSWriteSettings"
+						},
+						"formatSettings": {
+							"type": "DelimitedTextWriteSettings",
+							"quoteAllText": true,
+							"fileExtension": ".txt"
+						}
+					},
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"typeConversion": true,
+						"typeConversionSettings": {
+							"allowDataTruncation": true,
+							"treatBooleanAsNumber": false
+						}
+					}
 				},
 				"inputs": [
 					{
@@ -49,12 +75,238 @@
 							"JPSFTPKVURL": {
 								"value": "@variables('KVURL')",
 								"type": "Expression"
+							},
+							"JPSalesPipelineRunDate": {
+								"value": "@variables('JP_S2L_PipelineRundate')",
+								"type": "Expression"
+							}
+						}
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "ds_jp_sales_output",
+						"type": "DatasetReference",
+						"parameters": {
+							"JPLandingContainerURL": {
+								"value": "@variables('JP_S2L_LandingContainerURL')",
+								"type": "Expression"
+							},
+							"SPNID": {
+								"value": "@variables('SPNID')",
+								"type": "Expression"
+							},
+							"SPNSecretName": {
+								"value": "@variables('SPNSecretName')",
+								"type": "Expression"
+							},
+							"KVURL": {
+								"value": "@variables('KVURL')",
+								"type": "Expression"
+							},
+							"JPLandingContainerName": {
+								"value": "@variables('JP_S2L_LandingContainerName')",
+								"type": "Expression"
+							},
+							"JPPipelineRundate": {
+								"value": "@variables('JP_S2L_PipelineRundate')",
+								"type": "Expression"
 							}
 						}
 					}
 				]
+			},
+			{
+				"name": "Set SPN ID",
+				"type": "SetVariable",
+				"dependsOn": [],
+				"policy": {
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "SPNID",
+					"value": {
+						"value": "@if(equals(pipeline().globalParameters.Environment,'DEV'),pipeline().globalParameters.DEV_SPNID, if(equals(pipeline().globalParameters.Environment,'QA'), 'Bx', if(equals(pipeline().globalParameters.Environment,'UAT'), 'Bx', 'C')))",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "SEP SPN KV URL",
+				"type": "SetVariable",
+				"dependsOn": [
+					{
+						"activity": "Set SPN ID",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "KVURL",
+					"value": {
+						"value": "@if(equals(pipeline().globalParameters.Environment,'DEV'),pipeline().globalParameters.DEV_KVURL, if(equals(pipeline().globalParameters.Environment,'QA'), 'Bx', if(equals(pipeline().globalParameters.Environment,'UAT'), 'Bx', 'C')))",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "Set SPN KV Sceret Name",
+				"type": "SetVariable",
+				"dependsOn": [
+					{
+						"activity": "SEP SPN KV URL",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "SPNSecretName",
+					"value": {
+						"value": "@if(equals(pipeline().globalParameters.Environment,'DEV'),pipeline().globalParameters.DEV_SPNSecretName, if(equals(pipeline().globalParameters.Environment,'QA'), 'Bx', if(equals(pipeline().globalParameters.Environment,'UAT'), 'Bx', 'C')))",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "Set JP SFTP URL",
+				"type": "SetVariable",
+				"dependsOn": [
+					{
+						"activity": "Set SPN KV Sceret Name",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "JP_S2L_SFTPSourceURL",
+					"value": {
+						"value": "@if(equals(pipeline().globalParameters.Environment,'DEV'),pipeline().globalParameters.DEV_JP_SFTPURL, if(equals(pipeline().globalParameters.Environment,'QA'), 'Bx', if(equals(pipeline().globalParameters.Environment,'UAT'), 'Bx', 'C')))",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "Set SFTP User Name",
+				"type": "SetVariable",
+				"dependsOn": [
+					{
+						"activity": "Set JP SFTP URL",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "JP_S2L_SFTPUserName",
+					"value": {
+						"value": "@if(equals(pipeline().globalParameters.Environment,'DEV'),pipeline().globalParameters.DEV_JP_SFTPUserName, if(equals(pipeline().globalParameters.Environment,'QA'), 'Bx', if(equals(pipeline().globalParameters.Environment,'UAT'), 'Bx', 'C')))",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "Set JP SFTP User Password",
+				"type": "SetVariable",
+				"dependsOn": [
+					{
+						"activity": "Set SFTP User Name",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "JP_S2L_SFTPUserPassword",
+					"value": {
+						"value": "@if(equals(pipeline().globalParameters.Environment,'DEV'),pipeline().globalParameters.DEV_JP_SFTPUserPassword, if(equals(pipeline().globalParameters.Environment,'QA'), 'Bx', if(equals(pipeline().globalParameters.Environment,'UAT'), 'Bx', 'C')))",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "Set Pipeline Run Date",
+				"type": "SetVariable",
+				"dependsOn": [
+					{
+						"activity": "Set JP SFTP User Password",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "JP_S2L_PipelineRundate",
+					"value": {
+						"value": "@pipeline().parameters.RunDate",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "Set JP Landing Container Name",
+				"type": "SetVariable",
+				"dependsOn": [
+					{
+						"activity": "Set Pipeline Run Date",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "JP_S2L_LandingContainerName",
+					"value": {
+						"value": "@if(equals(pipeline().globalParameters.Environment,'DEV'),pipeline().globalParameters.DEV_JPSalesLandingContainerName, if(equals(pipeline().globalParameters.Environment,'QA'), 'Bx', if(equals(pipeline().globalParameters.Environment,'UAT'), 'Bx', 'C')))",
+						"type": "Expression"
+					}
+				}
 			}
 		],
+		"parameters": {
+			"RunDate": {
+				"type": "string"
+			}
+		},
 		"variables": {
 			"JP_S2L_SFTPSourceURL": {
 				"type": "String"
@@ -66,6 +318,21 @@
 				"type": "String"
 			},
 			"KVURL": {
+				"type": "String"
+			},
+			"SPNID": {
+				"type": "String"
+			},
+			"SPNSecretName": {
+				"type": "String"
+			},
+			"JP_S2L_PipelineRundate": {
+				"type": "String"
+			},
+			"JP_S2L_LandingContainerURL": {
+				"type": "String"
+			},
+			"JP_S2L_LandingContainerName": {
 				"type": "String"
 			}
 		},
