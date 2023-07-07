@@ -45,6 +45,10 @@
 							"JPSFTPUserPassword": {
 								"value": "@variables('JP_S2L_SFTPUserPassword')",
 								"type": "Expression"
+							},
+							"JPSFTPKVURL": {
+								"value": "@variables('KVURL')",
+								"type": "Expression"
 							}
 						}
 					}
