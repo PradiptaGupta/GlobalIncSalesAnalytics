@@ -1,0 +1,53 @@
+{
+	"name": "ds_jp_sales_input",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "lnk_jp_daily_sales_source",
+			"type": "LinkedServiceReference",
+			"parameters": {
+				"JP_SFTPURL": {
+					"value": "@dataset().JPSFTPURL",
+					"type": "Expression"
+				},
+				"JP_SFTPUserName": {
+					"value": "@dataset().JPSFTPUserName",
+					"type": "Expression"
+				},
+				"KVURL": {
+					"value": "@dataset().JPSFTPKVURL",
+					"type": "Expression"
+				},
+				"KVSecretName": {
+					"value": "@dataset().JPSFTPUserPassword",
+					"type": "Expression"
+				}
+			}
+		},
+		"parameters": {
+			"JPSFTPURL": {
+				"type": "string"
+			},
+			"JPSFTPUserName": {
+				"type": "string"
+			},
+			"JPSFTPUserPassword": {
+				"type": "string"
+			},
+			"JPSFTPKVURL": {
+				"type": "string"
+			}
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "SftpLocation"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": []
+	}
+}

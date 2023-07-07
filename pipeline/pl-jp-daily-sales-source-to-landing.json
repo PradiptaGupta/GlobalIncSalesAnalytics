@@ -1,6 +1,70 @@
 {
 	"name": "pl-jp-daily-sales-source-to-landing",
 	"properties": {
+		"activities": [
+			{
+				"name": "Copy daily sales data for Japan",
+				"type": "Copy",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "DelimitedTextSource",
+						"storeSettings": {
+							"type": "SftpReadSettings",
+							"recursive": false,
+							"enablePartitionDiscovery": false,
+							"disableChunking": false
+						},
+						"formatSettings": {
+							"type": "DelimitedTextReadSettings"
+						}
+					},
+					"enableStaging": false
+				},
+				"inputs": [
+					{
+						"referenceName": "ds_jp_sales_input",
+						"type": "DatasetReference",
+						"parameters": {
+							"JPSFTPURL": {
+								"value": "@variables('JP_S2L_SFTPSourceURL')",
+								"type": "Expression"
+							},
+							"JPSFTPUserName": {
+								"value": "@variables('JP_S2L_SFTPUserName')",
+								"type": "Expression"
+							},
+							"JPSFTPUserPassword": {
+								"value": "@variables('JP_S2L_SFTPUserPassword')",
+								"type": "Expression"
+							}
+						}
+					}
+				]
+			}
+		],
+		"variables": {
+			"JP_S2L_SFTPSourceURL": {
+				"type": "String"
+			},
+			"JP_S2L_SFTPUserName": {
+				"type": "String"
+			},
+			"JP_S2L_SFTPUserPassword": {
+				"type": "String"
+			},
+			"KVURL": {
+				"type": "String"
+			}
+		},
 		"annotations": []
 	}
 }
