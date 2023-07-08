@@ -73,6 +73,10 @@
 			"DEV_JPSalesLandingContainerName": {
 				"type": "string",
 				"value": "jp-sales-source"
+			},
+			"DEV_JPSalesLandingContainerURL": {
+				"type": "string",
+				"value": "aaaa"
 			}
 		}
 	},
