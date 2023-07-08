@@ -9,7 +9,7 @@
 				"userProperties": [],
 				"typeProperties": {
 					"pipeline": {
-						"referenceName": "pl-usdaily-sales-source-to-landing",
+						"referenceName": "pl-us-daily-sales-source-to-landing",
 						"type": "PipelineReference"
 					},
 					"waitOnCompletion": false,
@@ -36,6 +36,32 @@
 				"typeProperties": {
 					"pipeline": {
 						"referenceName": "pl-HK-SGP-daily-sales-source-to-landing",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": false,
+					"parameters": {
+						"RunDate": {
+							"value": "@pipeline().TriggerTime",
+							"type": "Expression"
+						}
+					}
+				}
+			},
+			{
+				"name": "Execute JP Source To Landing Pipeline",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "Execute HK SGP Source To Landing Pipeline",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "pl-jp-daily-sales-source-to-landing",
 						"type": "PipelineReference"
 					},
 					"waitOnCompletion": true,

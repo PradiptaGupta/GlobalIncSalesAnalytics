@@ -57,6 +57,26 @@
 			"DEV_HKSGPSalesLandingContainerName": {
 				"type": "string",
 				"value": "hk-sgp-sales-source"
+			},
+			"DEV_JP_SFTPUserPasswordSecret": {
+				"type": "string",
+				"value": "jp-sales-sftp-user-password"
+			},
+			"DEV_JP_SFTPUserName": {
+				"type": "string",
+				"value": "japansalesstorageaccount.jpsftpuser"
+			},
+			"DEV_JP_SFTPURL": {
+				"type": "string",
+				"value": "japansalesstorageaccount.blob.core.windows.net"
+			},
+			"DEV_JPSalesLandingContainerName": {
+				"type": "string",
+				"value": "jp-sales-source"
+			},
+			"DEV_JPSalesLandingContainerURL": {
+				"type": "string",
+				"value": "https://dataanalyticslabstorage.dfs.core.windows.net/"
 			}
 		}
 	},

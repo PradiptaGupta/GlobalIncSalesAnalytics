@@ -1,0 +1,46 @@
+{
+	"name": "lnk_jp_daily_sales_source",
+	"properties": {
+		"parameters": {
+			"JP_SFTPURL": {
+				"type": "string"
+			},
+			"JP_SFTPUserName": {
+				"type": "string"
+			},
+			"KVURL": {
+				"type": "string"
+			},
+			"KVSecretName": {
+				"type": "string"
+			}
+		},
+		"annotations": [],
+		"type": "Sftp",
+		"typeProperties": {
+			"host": "@{linkedService().JP_SFTPURL}",
+			"port": 22,
+			"skipHostKeyValidation": true,
+			"authenticationType": "Basic",
+			"userName": "@{linkedService().JP_SFTPUserName}",
+			"password": {
+				"type": "AzureKeyVaultSecret",
+				"store": {
+					"referenceName": "lnk_globalsales_kv",
+					"type": "LinkedServiceReference",
+					"parameters": {
+						"KVURL": {
+							"value": "@linkedService().KVURL",
+							"type": "Expression"
+						}
+					}
+				},
+				"secretName": {
+					"value": "@linkedService().KVSecretName",
+					"type": "Expression"
+				}
+			}
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/linkedservices"
+}

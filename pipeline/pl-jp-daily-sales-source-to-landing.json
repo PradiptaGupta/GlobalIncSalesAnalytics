@@ -1,18 +1,11 @@
 {
-	"name": "pl-HK-SGP-daily-sales-source-to-landing",
+	"name": "pl-jp-daily-sales-source-to-landing",
 	"properties": {
 		"activities": [
 			{
-				"name": "Copy HK and SGP daily Sales files from S2L",
+				"name": "Copy daily sales data for Japan",
 				"type": "Copy",
-				"dependsOn": [
-					{
-						"activity": "Set Run Date",
-						"dependencyConditions": [
-							"Succeeded"
-						]
-					}
-				],
+				"dependsOn": [],
 				"policy": {
 					"timeout": "0.12:00:00",
 					"retry": 0,
@@ -25,23 +18,13 @@
 					"source": {
 						"type": "DelimitedTextSource",
 						"storeSettings": {
-							"type": "AzureBlobFSReadSettings",
+							"type": "SftpReadSettings",
 							"recursive": false,
-							"wildcardFolderPath": {
-								"value": "@formatDateTime(variables('HKSGP_S2L_PipelineRunDate'),'dd-MMM-yyyy')",
-								"type": "Expression"
-							},
-							"wildcardFileName": {
-								"value": "@concat('ASIA_Sales_',formatDateTime(variables('HKSGP_S2L_PipelineRunDate'),'dd-MMM-yyyy'),'.zip')",
-								"type": "Expression"
-							},
-							"enablePartitionDiscovery": false
+							"enablePartitionDiscovery": false,
+							"disableChunking": false
 						},
 						"formatSettings": {
-							"type": "DelimitedTextReadSettings",
-							"compressionProperties": {
-								"type": "ZipDeflateReadSettings"
-							}
+							"type": "DelimitedTextReadSettings"
 						}
 					},
 					"sink": {
@@ -52,7 +35,7 @@
 						"formatSettings": {
 							"type": "DelimitedTextWriteSettings",
 							"quoteAllText": true,
-							"fileExtension": ".csv"
+							"fileExtension": ".txt"
 						}
 					},
 					"enableStaging": false,
@@ -67,27 +50,27 @@
 				},
 				"inputs": [
 					{
-						"referenceName": "ds_HK_SGP_sales_input",
+						"referenceName": "ds_jp_sales_input",
 						"type": "DatasetReference",
 						"parameters": {
-							"HKSGPSalesInputKVURL": {
-								"value": "@variables('HK_SGP_S2L_KVURL')",
+							"JPSFTPURL": {
+								"value": "@variables('JP_S2L_SFTPSourceURL')",
 								"type": "Expression"
 							},
-							"HKSGPContainerURL": {
-								"value": "@variables('HK_SGP_S2L_SalesSourceContainerURL')",
+							"JPSFTPUserName": {
+								"value": "@variables('JP_S2L_SFTPUserName')",
 								"type": "Expression"
 							},
-							"HKSGPSPNID": {
-								"value": "@variables('HK_SGP_S2L_SPNID')",
+							"JPSFTPUserPassword": {
+								"value": "@variables('JP_S2L_SFTPUserPassword')",
 								"type": "Expression"
 							},
-							"HKSGPSPNSecretName": {
-								"value": "@variables('HK_SGP_S2L_SPNSecretName')",
+							"JPSFTPKVURL": {
+								"value": "@variables('KVURL')",
 								"type": "Expression"
 							},
-							"HKSGPSalesInputContainerName": {
-								"value": "@variables('HK_SGP_S2L_SalesSourceContainerName')",
+							"JPSalesPipelineRunDate": {
+								"value": "@variables('JP_S2L_PipelineRundate')",
 								"type": "Expression"
 							}
 						}
@@ -95,31 +78,31 @@
 				],
 				"outputs": [
 					{
-						"referenceName": "ds_HK_SGP_sales_output",
+						"referenceName": "ds_jp_sales_output",
 						"type": "DatasetReference",
 						"parameters": {
-							"HKSGPSalesOutputKVURL": {
-								"value": "@variables('HK_SGP_S2L_KVURL')",
+							"JPLandingContainerURL": {
+								"value": "@variables('JP_S2L_LandingContainerURL')",
 								"type": "Expression"
 							},
-							"HKSGPSalesOutputContainerURL": {
-								"value": "@variables('HK_SGP_S2L_SalesLandingContainerURL')",
+							"SPNID": {
+								"value": "@variables('SPNID')",
 								"type": "Expression"
 							},
-							"HKSGPSalesOutputSPNID": {
-								"value": "@variables('HK_SGP_S2L_SPNID')",
+							"SPNSecretName": {
+								"value": "@variables('SPNSecretName')",
 								"type": "Expression"
 							},
-							"HKSGPSalesOutputSPNSecretName": {
-								"value": "@variables('HK_SGP_S2L_SPNSecretName')",
+							"KVURL": {
+								"value": "@variables('KVURL')",
 								"type": "Expression"
 							},
-							"HKSGPSalesOutputContainerName": {
-								"value": "@variables('HK_SGP_S2L_SalesLandingContainerName')",
+							"JPLandingContainerName": {
+								"value": "@variables('JP_S2L_LandingContainerName')",
 								"type": "Expression"
 							},
-							"HKSGPSalesPipelineRunDate": {
-								"value": "@variables('HKSGP_S2L_PipelineRunDate')",
+							"JPPipelineRundate": {
+								"value": "@variables('JP_S2L_PipelineRundate')",
 								"type": "Expression"
 							}
 						}
@@ -136,7 +119,7 @@
 				},
 				"userProperties": [],
 				"typeProperties": {
-					"variableName": "HK_SGP_S2L_SPNID",
+					"variableName": "SPNID",
 					"value": {
 						"value": "@if(equals(pipeline().globalParameters.Environment,'DEV'),pipeline().globalParameters.DEV_SPNID, if(equals(pipeline().globalParameters.Environment,'QA'), 'Bx', if(equals(pipeline().globalParameters.Environment,'UAT'), 'Bx', 'C')))",
 						"type": "Expression"
@@ -144,7 +127,7 @@
 				}
 			},
 			{
-				"name": "Set SPN SecretName",
+				"name": "SEP SPN KV URL",
 				"type": "SetVariable",
 				"dependsOn": [
 					{
@@ -160,127 +143,7 @@
 				},
 				"userProperties": [],
 				"typeProperties": {
-					"variableName": "HK_SGP_S2L_SPNSecretName",
-					"value": {
-						"value": "@if(equals(pipeline().globalParameters.Environment,'DEV'),pipeline().globalParameters.DEV_SPNSecretName, if(equals(pipeline().globalParameters.Environment,'QA'), 'Bx', if(equals(pipeline().globalParameters.Environment,'UAT'), 'Bx', 'C')))",
-						"type": "Expression"
-					}
-				}
-			},
-			{
-				"name": "Set SourceContainer URL",
-				"type": "SetVariable",
-				"dependsOn": [
-					{
-						"activity": "Set SPN SecretName",
-						"dependencyConditions": [
-							"Succeeded"
-						]
-					}
-				],
-				"policy": {
-					"secureOutput": false,
-					"secureInput": false
-				},
-				"userProperties": [],
-				"typeProperties": {
-					"variableName": "HK_SGP_S2L_SalesSourceContainerURL",
-					"value": {
-						"value": "@if(equals(pipeline().globalParameters.Environment,'DEV'),pipeline().globalParameters.DEV_HKSGPSalesSourceContainerURL, if(equals(pipeline().globalParameters.Environment,'QA'), 'Bx', if(equals(pipeline().globalParameters.Environment,'UAT'), 'Bx', 'C')))",
-						"type": "Expression"
-					}
-				}
-			},
-			{
-				"name": "Set Source Container Name",
-				"type": "SetVariable",
-				"dependsOn": [
-					{
-						"activity": "Set SourceContainer URL",
-						"dependencyConditions": [
-							"Succeeded"
-						]
-					}
-				],
-				"policy": {
-					"secureOutput": false,
-					"secureInput": false
-				},
-				"userProperties": [],
-				"typeProperties": {
-					"variableName": "HK_SGP_S2L_SalesSourceContainerName",
-					"value": {
-						"value": "@if(equals(pipeline().globalParameters.Environment,'DEV'),pipeline().globalParameters.DEV_HKSGPSalesSourceContainerName, if(equals(pipeline().globalParameters.Environment,'QA'), 'Bx', if(equals(pipeline().globalParameters.Environment,'UAT'), 'Bx', 'C')))",
-						"type": "Expression"
-					}
-				}
-			},
-			{
-				"name": "Set Landing Container URL",
-				"type": "SetVariable",
-				"dependsOn": [
-					{
-						"activity": "Set Source Container Name",
-						"dependencyConditions": [
-							"Succeeded"
-						]
-					}
-				],
-				"policy": {
-					"secureOutput": false,
-					"secureInput": false
-				},
-				"userProperties": [],
-				"typeProperties": {
-					"variableName": "HK_SGP_S2L_SalesLandingContainerURL",
-					"value": {
-						"value": "@if(equals(pipeline().globalParameters.Environment,'DEV'),pipeline().globalParameters.DEV_HKSGPSalesLandingContainerURL, if(equals(pipeline().globalParameters.Environment,'QA'), 'Bx', if(equals(pipeline().globalParameters.Environment,'UAT'), 'Bx', 'C')))",
-						"type": "Expression"
-					}
-				}
-			},
-			{
-				"name": "Set Landing Container Name",
-				"type": "SetVariable",
-				"dependsOn": [
-					{
-						"activity": "Set Landing Container URL",
-						"dependencyConditions": [
-							"Succeeded"
-						]
-					}
-				],
-				"policy": {
-					"secureOutput": false,
-					"secureInput": false
-				},
-				"userProperties": [],
-				"typeProperties": {
-					"variableName": "HK_SGP_S2L_SalesLandingContainerName",
-					"value": {
-						"value": "@if(equals(pipeline().globalParameters.Environment,'DEV'),pipeline().globalParameters.DEV_HKSGPSalesLandingContainerName, if(equals(pipeline().globalParameters.Environment,'QA'), 'Bx', if(equals(pipeline().globalParameters.Environment,'UAT'), 'Bx', 'C')))",
-						"type": "Expression"
-					}
-				}
-			},
-			{
-				"name": "Set KV URL",
-				"type": "SetVariable",
-				"dependsOn": [
-					{
-						"activity": "Set Landing Container Name",
-						"dependencyConditions": [
-							"Succeeded"
-						]
-					}
-				],
-				"policy": {
-					"secureOutput": false,
-					"secureInput": false
-				},
-				"userProperties": [],
-				"typeProperties": {
-					"variableName": "HK_SGP_S2L_KVURL",
+					"variableName": "KVURL",
 					"value": {
 						"value": "@if(equals(pipeline().globalParameters.Environment,'DEV'),pipeline().globalParameters.DEV_KVURL, if(equals(pipeline().globalParameters.Environment,'QA'), 'Bx', if(equals(pipeline().globalParameters.Environment,'UAT'), 'Bx', 'C')))",
 						"type": "Expression"
@@ -288,11 +151,11 @@
 				}
 			},
 			{
-				"name": "Set Run Date",
+				"name": "Set SPN KV Sceret Name",
 				"type": "SetVariable",
 				"dependsOn": [
 					{
-						"activity": "Set KV URL",
+						"activity": "SEP SPN KV URL",
 						"dependencyConditions": [
 							"Succeeded"
 						]
@@ -304,9 +167,153 @@
 				},
 				"userProperties": [],
 				"typeProperties": {
-					"variableName": "HKSGP_S2L_PipelineRunDate",
+					"variableName": "SPNSecretName",
+					"value": {
+						"value": "@if(equals(pipeline().globalParameters.Environment,'DEV'),pipeline().globalParameters.DEV_SPNSecretName, if(equals(pipeline().globalParameters.Environment,'QA'), 'Bx', if(equals(pipeline().globalParameters.Environment,'UAT'), 'Bx', 'C')))",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "Set JP SFTP URL",
+				"type": "SetVariable",
+				"dependsOn": [
+					{
+						"activity": "Set SPN KV Sceret Name",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "JP_S2L_SFTPSourceURL",
+					"value": {
+						"value": "@if(equals(pipeline().globalParameters.Environment,'DEV'),pipeline().globalParameters.DEV_JP_SFTPURL, if(equals(pipeline().globalParameters.Environment,'QA'), 'Bx', if(equals(pipeline().globalParameters.Environment,'UAT'), 'Bx', 'C')))",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "Set SFTP User Name",
+				"type": "SetVariable",
+				"dependsOn": [
+					{
+						"activity": "Set JP SFTP URL",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "JP_S2L_SFTPUserName",
+					"value": {
+						"value": "@if(equals(pipeline().globalParameters.Environment,'DEV'),pipeline().globalParameters.DEV_JP_SFTPUserName, if(equals(pipeline().globalParameters.Environment,'QA'), 'Bx', if(equals(pipeline().globalParameters.Environment,'UAT'), 'Bx', 'C')))",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "Set JP SFTP User Password",
+				"type": "SetVariable",
+				"dependsOn": [
+					{
+						"activity": "Set SFTP User Name",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "JP_S2L_SFTPUserPassword",
+					"value": {
+						"value": "@if(equals(pipeline().globalParameters.Environment,'DEV'),pipeline().globalParameters.DEV_JP_SFTPUserPasswordSecret, if(equals(pipeline().globalParameters.Environment,'QA'), 'Bx', if(equals(pipeline().globalParameters.Environment,'UAT'), 'Bx', 'C')))",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "Set Pipeline Run Date",
+				"type": "SetVariable",
+				"dependsOn": [
+					{
+						"activity": "Set JP SFTP User Password",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "JP_S2L_PipelineRundate",
 					"value": {
 						"value": "@pipeline().parameters.RunDate",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "Set JP Landing Container Name",
+				"type": "SetVariable",
+				"dependsOn": [
+					{
+						"activity": "Set Pipeline Run Date",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "JP_S2L_LandingContainerName",
+					"value": {
+						"value": "@if(equals(pipeline().globalParameters.Environment,'DEV'),pipeline().globalParameters.DEV_JPSalesLandingContainerName, if(equals(pipeline().globalParameters.Environment,'QA'), 'Bx', if(equals(pipeline().globalParameters.Environment,'UAT'), 'Bx', 'C')))",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "Set Landing Container uRL",
+				"type": "SetVariable",
+				"dependsOn": [
+					{
+						"activity": "Set JP Landing Container Name",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "JP_S2L_LandingContainerURL",
+					"value": {
+						"value": "'@if(equals(pipeline().globalParameters.Environment,'DEV'),pipeline().globalParameters.DEV_JPSalesLandingContainerURL, if(equals(pipeline().globalParameters.Environment,'QA'), 'Bx', if(equals(pipeline().globalParameters.Environment,'UAT'), 'Bx', 'C')))",
 						"type": "Expression"
 					}
 				}
@@ -314,33 +321,35 @@
 		],
 		"parameters": {
 			"RunDate": {
-				"type": "string",
-				"defaultValue": "dd-MMM-yyyy"
+				"type": "string"
 			}
 		},
 		"variables": {
-			"HK_SGP_S2L_SPNID": {
+			"JP_S2L_SFTPSourceURL": {
 				"type": "String"
 			},
-			"HK_SGP_S2L_SPNSecretName": {
+			"JP_S2L_SFTPUserName": {
 				"type": "String"
 			},
-			"HK_SGP_S2L_SalesSourceContainerURL": {
+			"JP_S2L_SFTPUserPassword": {
 				"type": "String"
 			},
-			"HK_SGP_S2L_SalesLandingContainerURL": {
+			"KVURL": {
 				"type": "String"
 			},
-			"HK_SGP_S2L_KVURL": {
+			"SPNID": {
 				"type": "String"
 			},
-			"HK_SGP_S2L_SalesSourceContainerName": {
+			"SPNSecretName": {
 				"type": "String"
 			},
-			"HK_SGP_S2L_SalesLandingContainerName": {
+			"JP_S2L_PipelineRundate": {
 				"type": "String"
 			},
-			"HKSGP_S2L_PipelineRunDate": {
+			"JP_S2L_LandingContainerURL": {
+				"type": "String"
+			},
+			"JP_S2L_LandingContainerName": {
 				"type": "String"
 			}
 		},
