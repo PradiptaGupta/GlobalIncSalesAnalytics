@@ -76,7 +76,7 @@
 			},
 			"DEV_JPSalesLandingContainerURL": {
 				"type": "string",
-				"value": "aaaa"
+				"value": "https://dataanalyticslabstorage.dfs.core.windows.net/"
 			}
 		}
 	},
