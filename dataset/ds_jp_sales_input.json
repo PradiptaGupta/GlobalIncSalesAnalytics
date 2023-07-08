@@ -45,11 +45,7 @@
 		"typeProperties": {
 			"location": {
 				"type": "SftpLocation",
-				"fileName": "*.csv",
-				"folderPath": {
-					"value": "@formatDateTime(dataset().JPSalesPipelineRunDate,'dd-MMM-yyyy')",
-					"type": "Expression"
-				}
+				"fileName": "*.csv"
 			},
 			"columnDelimiter": ",",
 			"escapeChar": "\\",
