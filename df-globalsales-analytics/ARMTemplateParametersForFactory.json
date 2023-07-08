@@ -5,15 +5,6 @@
 		"factoryName": {
 			"value": "df-globalsales-analytics"
 		},
-		"AzureDataLakeStorage1_properties_typeProperties_url": {
-			"value": "https://dataanalyticslabstorage.dfs.core.windows.net/"
-		},
-		"AzureDataLakeStorage1_properties_typeProperties_tenant": {
-			"value": "c42ed202-1ca3-48c8-bacd-c874383e5727"
-		},
-		"AzureDataLakeStorage1_properties_typeProperties_servicePrincipalId": {
-			"value": "6314eaa1-2e8e-4c12-bd61-6dabbdb84b83"
-		},
 		"lnk_HK_SGP_daily_sales_source_properties_typeProperties_url": {
 			"value": "@{linkedService().ContainerURL}"
 		},
@@ -25,6 +16,12 @@
 		},
 		"lnk_globalsales_kv_properties_typeProperties_baseUrl": {
 			"value": "@{linkedService().KVURL}"
+		},
+		"lnk_jp_daily_sales_source_properties_typeProperties_host": {
+			"value": "@{linkedService().JP_SFTPURL}"
+		},
+		"lnk_jp_daily_sales_source_properties_typeProperties_userName": {
+			"value": "@{linkedService().JP_SFTPUserName}"
 		},
 		"lnk_sales_analytics_properties_typeProperties_url": {
 			"value": "@{linkedService().ContainerURL}"
