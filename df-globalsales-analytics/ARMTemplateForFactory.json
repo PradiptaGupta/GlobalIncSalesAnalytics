@@ -424,6 +424,9 @@
 						"type": "String"
 					}
 				},
+				"folder": {
+					"name": "Source To Landing/HK SGP Source To Landing"
+				},
 				"annotations": []
 			},
 			"dependsOn": [
@@ -512,6 +515,9 @@
 				"policy": {
 					"elapsedTimeMetric": {},
 					"cancelAfter": {}
+				},
+				"folder": {
+					"name": "Source To Landing"
 				},
 				"annotations": []
 			},
@@ -893,6 +899,9 @@
 					"JP_S2L_LandingContainerName": {
 						"type": "String"
 					}
+				},
+				"folder": {
+					"name": "Source To Landing/JP Source To Landing"
 				},
 				"annotations": []
 			},
@@ -1384,6 +1393,9 @@
 					"US_S2L_PipelineRunDate": {
 						"type": "String"
 					}
+				},
+				"folder": {
+					"name": "Source To Landing/US Source To Landing"
 				},
 				"annotations": [],
 				"lastPublishTime": "2023-07-03T08:51:41Z"
