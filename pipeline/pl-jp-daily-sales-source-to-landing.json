@@ -5,7 +5,14 @@
 			{
 				"name": "Copy daily sales data for Japan",
 				"type": "Copy",
-				"dependsOn": [],
+				"dependsOn": [
+					{
+						"activity": "Set Landing Container uRL",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
 				"policy": {
 					"timeout": "0.12:00:00",
 					"retry": 0,
@@ -20,6 +27,11 @@
 						"storeSettings": {
 							"type": "SftpReadSettings",
 							"recursive": false,
+							"wildcardFolderPath": {
+								"value": "@concat('/',formatDateTime(variables('JP_S2L_PipelineRundate'),'dd-MMM-yyyy'))",
+								"type": "Expression"
+							},
+							"wildcardFileName": "*.csv",
 							"enablePartitionDiscovery": false,
 							"disableChunking": false
 						},
@@ -313,7 +325,7 @@
 				"typeProperties": {
 					"variableName": "JP_S2L_LandingContainerURL",
 					"value": {
-						"value": "'@if(equals(pipeline().globalParameters.Environment,'DEV'),pipeline().globalParameters.DEV_JPSalesLandingContainerURL, if(equals(pipeline().globalParameters.Environment,'QA'), 'Bx', if(equals(pipeline().globalParameters.Environment,'UAT'), 'Bx', 'C')))",
+						"value": "@if(equals(pipeline().globalParameters.Environment,'DEV'),pipeline().globalParameters.DEV_JPSalesLandingContainerURL, if(equals(pipeline().globalParameters.Environment,'QA'), 'Bx', if(equals(pipeline().globalParameters.Environment,'UAT'), 'Bx', 'C')))",
 						"type": "Expression"
 					}
 				}
