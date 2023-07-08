@@ -344,6 +344,9 @@
 				"type": "String"
 			}
 		},
+		"folder": {
+			"name": "Source To Landing/HK SGP Source To Landing"
+		},
 		"annotations": []
 	}
 }

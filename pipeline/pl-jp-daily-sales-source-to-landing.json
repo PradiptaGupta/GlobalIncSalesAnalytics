@@ -365,6 +365,9 @@
 				"type": "String"
 			}
 		},
+		"folder": {
+			"name": "Source To Landing/JP Source To Landing"
+		},
 		"annotations": []
 	}
 }
