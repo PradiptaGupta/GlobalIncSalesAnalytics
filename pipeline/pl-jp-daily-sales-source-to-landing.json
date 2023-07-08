@@ -5,14 +5,7 @@
 			{
 				"name": "Copy daily sales data for Japan",
 				"type": "Copy",
-				"dependsOn": [
-					{
-						"activity": "Set JP Landing Container Name",
-						"dependencyConditions": [
-							"Succeeded"
-						]
-					}
-				],
+				"dependsOn": [],
 				"policy": {
 					"timeout": "0.12:00:00",
 					"retry": 0,
@@ -297,6 +290,30 @@
 					"variableName": "JP_S2L_LandingContainerName",
 					"value": {
 						"value": "@if(equals(pipeline().globalParameters.Environment,'DEV'),pipeline().globalParameters.DEV_JPSalesLandingContainerName, if(equals(pipeline().globalParameters.Environment,'QA'), 'Bx', if(equals(pipeline().globalParameters.Environment,'UAT'), 'Bx', 'C')))",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "Set Landing Container uRL",
+				"type": "SetVariable",
+				"dependsOn": [
+					{
+						"activity": "Set JP Landing Container Name",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "JP_S2L_LandingContainerURL",
+					"value": {
+						"value": "'@if(equals(pipeline().globalParameters.Environment,'DEV'),pipeline().globalParameters.DEV_JPSalesLandingContainerURL, if(equals(pipeline().globalParameters.Environment,'QA'), 'Bx', if(equals(pipeline().globalParameters.Environment,'UAT'), 'Bx', 'C')))",
 						"type": "Expression"
 					}
 				}
