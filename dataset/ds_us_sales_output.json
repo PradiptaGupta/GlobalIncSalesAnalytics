@@ -44,6 +44,9 @@
 			},
 			"USSalesPipelineRunDate": {
 				"type": "string"
+			},
+			"SheetName": {
+				"type": "string"
 			}
 		},
 		"annotations": [],
@@ -52,7 +55,7 @@
 			"location": {
 				"type": "AzureBlobFSLocation",
 				"fileName": {
-					"value": "@concat('US_',dataset().FileName,'_',formatDateTime(dataset().USSalesPipelineRunDate,'dd-MMM-yyyy'),'.csv')",
+					"value": "@concat(dataset().SheetName,'_',dataset().FileName,'.csv')",
 					"type": "Expression"
 				},
 				"folderPath": {

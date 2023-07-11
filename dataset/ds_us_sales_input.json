@@ -41,6 +41,12 @@
 			},
 			"USSalesInputContainerName": {
 				"type": "string"
+			},
+			"RunDate": {
+				"type": "string"
+			},
+			"Filename": {
+				"type": "string"
 			}
 		},
 		"annotations": [],
@@ -52,8 +58,10 @@
 			},
 			"location": {
 				"type": "AzureBlobFSLocation",
-				"fileName": "US Sales_02-Jul-2023.xlsx",
-				"folderPath": "02-Jul-2023",
+				"folderPath": {
+					"value": "@formatDateTime(dataset().RunDate,'dd-MMM-yyyy')",
+					"type": "Expression"
+				},
 				"fileSystem": {
 					"value": "@dataset().USSalesInputContainerName",
 					"type": "Expression"

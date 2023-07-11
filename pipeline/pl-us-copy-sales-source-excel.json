@@ -1,0 +1,252 @@
+{
+	"name": "pl-us-copy-sales-source-excel",
+	"properties": {
+		"activities": [
+			{
+				"name": "Get Metadata1",
+				"type": "GetMetadata",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataset": {
+						"referenceName": "ds_us_sales_input",
+						"type": "DatasetReference",
+						"parameters": {
+							"SheetName": {
+								"value": "@pipeline().parameters.SheetName",
+								"type": "Expression"
+							},
+							"USSalesInputKVURL": {
+								"value": "@pipeline().parameters.KVURL",
+								"type": "Expression"
+							},
+							"USSalesInputContainerURL": {
+								"value": "@pipeline().parameters.SourceContainerURL",
+								"type": "Expression"
+							},
+							"USSalesInputSPNID": {
+								"value": "@pipeline().parameters.SPNID",
+								"type": "Expression"
+							},
+							"USSalesInputSPNSecretName": {
+								"value": "@pipeline().parameters.SPNSecretName",
+								"type": "Expression"
+							},
+							"USSalesInputContainerName": {
+								"value": "@pipeline().parameters.SourceContainerName",
+								"type": "Expression"
+							},
+							"RunDate": {
+								"value": "@pipeline().parameters.RunDate",
+								"type": "Expression"
+							},
+							"Filename": {
+								"value": "@pipeline().parameters.SheetName",
+								"type": "Expression"
+							}
+						}
+					},
+					"fieldList": [
+						"childItems"
+					],
+					"storeSettings": {
+						"type": "AzureBlobFSReadSettings",
+						"enablePartitionDiscovery": false
+					}
+				}
+			},
+			{
+				"name": "ForEach1",
+				"type": "ForEach",
+				"dependsOn": [
+					{
+						"activity": "Get Metadata1",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"items": {
+						"value": "@activity('Get Metadata1').output.childItems",
+						"type": "Expression"
+					},
+					"activities": [
+						{
+							"name": "Copy data1",
+							"type": "Copy",
+							"dependsOn": [],
+							"policy": {
+								"timeout": "0.12:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"source": {
+									"type": "ExcelSource",
+									"storeSettings": {
+										"type": "AzureBlobFSReadSettings",
+										"recursive": true,
+										"wildcardFolderPath": {
+											"value": "@formatDateTime(pipeline().parameters.RunDate,'dd-MMM-yyyy')",
+											"type": "Expression"
+										},
+										"wildcardFileName": {
+											"value": "@item().name",
+											"type": "Expression"
+										},
+										"enablePartitionDiscovery": false
+									}
+								},
+								"sink": {
+									"type": "DelimitedTextSink",
+									"storeSettings": {
+										"type": "AzureBlobFSWriteSettings"
+									},
+									"formatSettings": {
+										"type": "DelimitedTextWriteSettings",
+										"quoteAllText": true,
+										"fileExtension": ".txt"
+									}
+								},
+								"enableStaging": false,
+								"translator": {
+									"type": "TabularTranslator",
+									"typeConversion": true,
+									"typeConversionSettings": {
+										"allowDataTruncation": true,
+										"treatBooleanAsNumber": false
+									}
+								}
+							},
+							"inputs": [
+								{
+									"referenceName": "ds_us_sales_input",
+									"type": "DatasetReference",
+									"parameters": {
+										"SheetName": {
+											"value": "@pipeline().parameters.SheetName",
+											"type": "Expression"
+										},
+										"USSalesInputKVURL": {
+											"value": "@pipeline().parameters.KVURL",
+											"type": "Expression"
+										},
+										"USSalesInputContainerURL": {
+											"value": "@pipeline().parameters.SourceContainerURL",
+											"type": "Expression"
+										},
+										"USSalesInputSPNID": {
+											"value": "@pipeline().parameters.SPNID",
+											"type": "Expression"
+										},
+										"USSalesInputSPNSecretName": {
+											"value": "@pipeline().parameters.SPNSecretName",
+											"type": "Expression"
+										},
+										"USSalesInputContainerName": {
+											"value": "@pipeline().parameters.SourceContainerName",
+											"type": "Expression"
+										},
+										"RunDate": {
+											"value": "@pipeline().parameters.RunDate",
+											"type": "Expression"
+										},
+										"Filename": {
+											"value": "@item().name",
+											"type": "Expression"
+										}
+									}
+								}
+							],
+							"outputs": [
+								{
+									"referenceName": "ds_us_sales_output",
+									"type": "DatasetReference",
+									"parameters": {
+										"FileName": {
+											"value": "@pipeline().parameters.SheetName",
+											"type": "Expression"
+										},
+										"USSalesOutputKVURL": {
+											"value": "@pipeline().parameters.KVURL",
+											"type": "Expression"
+										},
+										"USSalesOutputContainerURL": {
+											"value": "@pipeline().parameters.LandingContainerURL",
+											"type": "Expression"
+										},
+										"USSalesOutputSPNID": {
+											"value": "@pipeline().parameters.SPNID",
+											"type": "Expression"
+										},
+										"USSalesOutputSPNSecretName": {
+											"value": "@pipeline().parameters.SPNSecretName",
+											"type": "Expression"
+										},
+										"USSalesOutputContainerName": {
+											"value": "@pipeline().parameters.LandingContainerName",
+											"type": "Expression"
+										},
+										"USSalesPipelineRunDate": {
+											"value": "@pipeline().parameters.RunDate",
+											"type": "Expression"
+										},
+										"SheetName": {
+											"value": "@pipeline().parameters.SheetName",
+											"type": "Expression"
+										}
+									}
+								}
+							]
+						}
+					]
+				}
+			}
+		],
+		"parameters": {
+			"SheetName": {
+				"type": "string"
+			},
+			"KVURL": {
+				"type": "string"
+			},
+			"SPNID": {
+				"type": "string"
+			},
+			"SPNSecretName": {
+				"type": "string"
+			},
+			"SourceContainerURL": {
+				"type": "string"
+			},
+			"SourceContainerName": {
+				"type": "string"
+			},
+			"RunDate": {
+				"type": "string"
+			},
+			"LandingContainerURL": {
+				"type": "string"
+			},
+			"LandingContainerName": {
+				"type": "string"
+			}
+		},
+		"folder": {
+			"name": "Source To Landing/US Source To Landing/Copy Excels from US Source"
+		},
+		"annotations": []
+	}
+}

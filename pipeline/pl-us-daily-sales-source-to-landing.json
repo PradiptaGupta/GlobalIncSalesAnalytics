@@ -83,123 +83,55 @@
 					"batchCount": 2,
 					"activities": [
 						{
-							"name": "Copy US Sales",
-							"type": "Copy",
+							"name": "Execute Pipeline1",
+							"type": "ExecutePipeline",
 							"dependsOn": [],
-							"policy": {
-								"timeout": "0.12:00:00",
-								"retry": 0,
-								"retryIntervalInSeconds": 30,
-								"secureOutput": false,
-								"secureInput": false
-							},
 							"userProperties": [],
 							"typeProperties": {
-								"source": {
-									"type": "ExcelSource",
-									"storeSettings": {
-										"type": "AzureBlobFSReadSettings",
-										"recursive": false,
-										"wildcardFolderPath": {
-											"value": "@formatDateTime(variables('US_S2L_PipelineRunDate'),'dd-MMM-yyyy')",
-											"type": "Expression"
-										},
-										"wildcardFileName": {
-											"value": "@concat('US_Sales_',formatDateTime(variables('US_S2L_PipelineRunDate'),'dd-MMM-yyyy'),'.xlsx')",
-											"type": "Expression"
-										},
-										"enablePartitionDiscovery": false
-									}
+								"pipeline": {
+									"referenceName": "pl-us-copy-sales-source-excel",
+									"type": "PipelineReference"
 								},
-								"sink": {
-									"type": "DelimitedTextSink",
-									"storeSettings": {
-										"type": "AzureBlobFSWriteSettings"
+								"waitOnCompletion": true,
+								"parameters": {
+									"SheetName": {
+										"value": "@item().Sheet",
+										"type": "Expression"
 									},
-									"formatSettings": {
-										"type": "DelimitedTextWriteSettings",
-										"quoteAllText": true,
-										"fileExtension": ".txt"
-									}
-								},
-								"enableStaging": false,
-								"translator": {
-									"type": "TabularTranslator",
-									"typeConversion": true,
-									"typeConversionSettings": {
-										"allowDataTruncation": true,
-										"treatBooleanAsNumber": false
-									}
-								}
-							},
-							"inputs": [
-								{
-									"referenceName": "ds_us_sales_input",
-									"type": "DatasetReference",
-									"parameters": {
-										"SheetName": {
-											"value": "@item().Sheet",
-											"type": "Expression"
-										},
-										"USSalesInputKVURL": {
-											"value": "@variables('US_S2L_KVURL')",
-											"type": "Expression"
-										},
-										"USSalesInputContainerURL": {
-											"value": "@variables('US_S2L_USSalesSourceContainerURL')",
-											"type": "Expression"
-										},
-										"USSalesInputSPNID": {
-											"value": "@variables('US_S2L_SPNID')",
-											"type": "Expression"
-										},
-										"USSalesInputSPNSecretName": {
-											"value": "@variables('US_S2L_SPNSecretName')",
-											"type": "Expression"
-										},
-										"USSalesInputContainerName": {
-											"value": "@variables('US_S2L_USSalesSourceContainerName')",
-											"type": "Expression"
-										}
+									"KVURL": {
+										"value": "@variables('US_S2L_KVURL')",
+										"type": "Expression"
+									},
+									"SPNID": {
+										"value": "@variables('US_S2L_SPNID')",
+										"type": "Expression"
+									},
+									"SPNSecretName": {
+										"value": "@variables('US_S2L_SPNSecretName')",
+										"type": "Expression"
+									},
+									"SourceContainerURL": {
+										"value": "@variables('US_S2L_USSalesSourceContainerURL')",
+										"type": "Expression"
+									},
+									"SourceContainerName": {
+										"value": "@variables('US_S2L_USSalesSourceContainerName')",
+										"type": "Expression"
+									},
+									"RunDate": {
+										"value": "@variables('US_S2L_PipelineRunDate')",
+										"type": "Expression"
+									},
+									"LandingContainerURL": {
+										"value": "@variables('US_S2L_USSalesLandingContainerURL')",
+										"type": "Expression"
+									},
+									"LandingContainerName": {
+										"value": "@variables('US_S2L_USSalesLandingContainerName')",
+										"type": "Expression"
 									}
 								}
-							],
-							"outputs": [
-								{
-									"referenceName": "ds_us_sales_output",
-									"type": "DatasetReference",
-									"parameters": {
-										"FileName": {
-											"value": "@item().Sheet",
-											"type": "Expression"
-										},
-										"USSalesOutputKVURL": {
-											"value": "@variables('US_S2L_KVURL')",
-											"type": "Expression"
-										},
-										"USSalesOutputContainerURL": {
-											"value": "@variables('US_S2L_USSalesLandingContainerURL')",
-											"type": "Expression"
-										},
-										"USSalesOutputSPNID": {
-											"value": "@variables('US_S2L_SPNID')",
-											"type": "Expression"
-										},
-										"USSalesOutputSPNSecretName": {
-											"value": "@variables('US_S2L_SPNSecretName')",
-											"type": "Expression"
-										},
-										"USSalesOutputContainerName": {
-											"value": "@variables('US_S2L_USSalesLandingContainerName')",
-											"type": "Expression"
-										},
-										"USSalesPipelineRunDate": {
-											"value": "@variables('US_S2L_PipelineRunDate')",
-											"type": "Expression"
-										}
-									}
-								}
-							]
+							}
 						}
 					]
 				}
@@ -312,7 +244,7 @@
 				"typeProperties": {
 					"variableName": "US_S2L_USSalesLandingContainerURL",
 					"value": {
-						"value": "@if(equals(pipeline().globalParameters.Environment,'DEV'),pipeline().globalParameters.DEV_USSalesLandingContainerURL, if(equals(pipeline().globalParameters.Environment,'QA'), 'Bx', if(equals(pipeline().globalParameters.Environment,'UAT'), 'Bx', 'C')))",
+						"value": "@if(equals(pipeline().globalParameters.Environment,'DEV'),pipeline().globalParameters.DEV_GlobalSalesLandingContainerURL, if(equals(pipeline().globalParameters.Environment,'QA'), 'Bx', if(equals(pipeline().globalParameters.Environment,'UAT'), 'Bx', 'C')))",
 						"type": "Expression"
 					}
 				}
