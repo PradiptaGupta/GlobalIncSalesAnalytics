@@ -58,6 +58,10 @@
 			},
 			"location": {
 				"type": "AzureBlobFSLocation",
+				"fileName": {
+					"value": "@dataset().Filename",
+					"type": "Expression"
+				},
 				"folderPath": {
 					"value": "@formatDateTime(dataset().RunDate,'dd-MMM-yyyy')",
 					"type": "Expression"
