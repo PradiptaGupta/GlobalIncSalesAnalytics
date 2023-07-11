@@ -55,7 +55,7 @@
 			"location": {
 				"type": "AzureBlobFSLocation",
 				"fileName": {
-					"value": "@concat(dataset().SheetName,'_',dataset().FileName,'.csv')",
+					"value": "@concat(dataset().SheetName,'_',substring(dataset().FileName,0,lastindexof(dataset().FileName,'.xlsx')),'.csv')",
 					"type": "Expression"
 				},
 				"folderPath": {
