@@ -77,6 +77,10 @@
 			"DEV_JPSalesLandingContainerURL": {
 				"type": "string",
 				"value": "https://dataanalyticslabstorage.dfs.core.windows.net/"
+			},
+			"DEV_GlobalSalesLandingContainerURL": {
+				"type": "string",
+				"value": "hghgj"
 			}
 		}
 	},
