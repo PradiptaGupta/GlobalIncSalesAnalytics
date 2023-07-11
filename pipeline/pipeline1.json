@@ -1,0 +1,166 @@
+{
+	"name": "pipeline1",
+	"properties": {
+		"activities": [
+			{
+				"name": "Get Metadata1",
+				"type": "GetMetadata",
+				"dependsOn": [
+					{
+						"activity": "Set variable4",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataset": {
+						"referenceName": "ds_global_sales_daily_input",
+						"type": "DatasetReference",
+						"parameters": {
+							"GlobalSalesSourceContainerURL": {
+								"value": "@variables('GlobalSalesInputContainerUL')",
+								"type": "Expression"
+							},
+							"SPNID": {
+								"value": "@variables('SPNID')",
+								"type": "Expression"
+							},
+							"SPNSecret": {
+								"value": "@variables('SPNSecretName')",
+								"type": "Expression"
+							},
+							"KVURL": {
+								"value": "@variables('KVURL')",
+								"type": "Expression"
+							}
+						}
+					},
+					"fieldList": [],
+					"storeSettings": {
+						"type": "AzureBlobFSReadSettings",
+						"enablePartitionDiscovery": false
+					},
+					"formatSettings": {
+						"type": "DelimitedTextReadSettings"
+					}
+				}
+			},
+			{
+				"name": "Set variable1",
+				"type": "SetVariable",
+				"dependsOn": [],
+				"policy": {
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "GlobalSalesInputContainerUL",
+					"value": {
+						"value": "@if(equals(pipeline().globalParameters.Environment,'DEV'),pipeline().globalParameters.DEV_GlobalSalesLandingContainerURL, if(equals(pipeline().globalParameters.Environment,'QA'), 'Bx', if(equals(pipeline().globalParameters.Environment,'UAT'), 'Bx', 'C')))",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "Set variable2",
+				"type": "SetVariable",
+				"dependsOn": [
+					{
+						"activity": "Set variable1",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "SPNID",
+					"value": {
+						"value": "@if(equals(pipeline().globalParameters.Environment,'DEV'),pipeline().globalParameters.DEV_SPNID, if(equals(pipeline().globalParameters.Environment,'QA'), 'Bx', if(equals(pipeline().globalParameters.Environment,'UAT'), 'Bx', 'C')))",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "Set variable3",
+				"type": "SetVariable",
+				"dependsOn": [
+					{
+						"activity": "Set variable2",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "SPNSecretName",
+					"value": {
+						"value": "@if(equals(pipeline().globalParameters.Environment,'DEV'),pipeline().globalParameters.DEV_SPNSecretName, if(equals(pipeline().globalParameters.Environment,'QA'), 'Bx', if(equals(pipeline().globalParameters.Environment,'UAT'), 'Bx', 'C')))",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "Set variable4",
+				"type": "SetVariable",
+				"dependsOn": [
+					{
+						"activity": "Set variable3",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "KVURL",
+					"value": {
+						"value": "@if(equals(pipeline().globalParameters.Environment,'DEV'),pipeline().globalParameters.DEV_KVURL, if(equals(pipeline().globalParameters.Environment,'QA'), 'Bx', if(equals(pipeline().globalParameters.Environment,'UAT'), 'Bx', 'C')))",
+						"type": "Expression"
+					}
+				}
+			}
+		],
+		"variables": {
+			"GlobalSalesInputContainerUL": {
+				"type": "String"
+			},
+			"SPNID": {
+				"type": "String"
+			},
+			"SPNSecretName": {
+				"type": "String"
+			},
+			"KVURL": {
+				"type": "String"
+			}
+		},
+		"folder": {
+			"name": "Landing To RAW"
+		},
+		"annotations": []
+	}
+}

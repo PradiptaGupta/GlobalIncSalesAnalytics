@@ -1,0 +1,54 @@
+{
+	"name": "ds_global_sales_daily_input",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "lnk_sales_analytics",
+			"type": "LinkedServiceReference",
+			"parameters": {
+				"ContainerURL": {
+					"value": "@dataset().GlobalSalesSourceContainerURL",
+					"type": "Expression"
+				},
+				"SPNID": {
+					"value": "@dataset().SPNID",
+					"type": "Expression"
+				},
+				"SPNSecretName": {
+					"value": "@dataset().SPNSecret",
+					"type": "Expression"
+				},
+				"KVURL": {
+					"value": "@dataset().KVURL",
+					"type": "Expression"
+				}
+			}
+		},
+		"parameters": {
+			"GlobalSalesSourceContainerURL": {
+				"type": "string"
+			},
+			"SPNID": {
+				"type": "string"
+			},
+			"SPNSecret": {
+				"type": "string"
+			},
+			"KVURL": {
+				"type": "string"
+			}
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": "*.csv"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": []
+	}
+}
