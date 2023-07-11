@@ -80,7 +80,7 @@
 			},
 			"DEV_GlobalSalesLandingContainerURL": {
 				"type": "string",
-				"value": "hghgj"
+				"value": "https://dataanalyticslabstorage.dfs.core.windows.net/"
 			}
 		}
 	},
